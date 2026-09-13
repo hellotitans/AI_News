@@ -164,6 +164,16 @@
   .fy-btn:hover{background:#5fb3a5;color:#12211d;}
   .fy-btn.primary{background:#5fb3a5;color:#12211d;font-weight:700;}
   .fy-btn.primary:hover{background:#7ccbbd;}
+  .fy-btn.voice{border-color:#c8a95f;color:#c8a95f;}
+  .fy-btn.voice:hover{background:#c8a95f;color:#1a1608;}
+  .fy-btn.voice.listening{
+    background:var(--vermilion);border-color:var(--vermilion);color:#fff;
+    animation:voice-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes voice-pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.55);}
+    50%{box-shadow:0 0 0 10px rgba(192,57,43,0);}
+  }
   .fy-status{font-size:12px;color:#8d8571;letter-spacing:.08em;align-self:center;}
   .fy-ref{margin-top:30px;}
   .fy-ref summary{
@@ -359,9 +369,10 @@
 
     <div class="fy-input-area">
       <label for="feynman-note">我的复述 · MY EXPLANATION</label>
-      <textarea id="feynman-note" placeholder="Q1:……&#10;Q2:……&#10;Q3:……&#10;&#10;写完后,展开下方「参考要点」逐条对照。"></textarea>
+      <textarea id="feynman-note" placeholder="Q1:……&#10;Q2:……&#10;Q3:……&#10;&#10;可以打字,也可以用下面的「按住说话」语音输入,写完后展开参考要点对照。"></textarea>
       <div class="fy-actions">
         <button class="fy-btn primary" id="btn-submit">提交点评</button>
+        <button class="fy-btn voice" id="btn-voice" title="按住说话,松开结束(Chrome/Edge)">🎤 按住说话</button>
         <button class="fy-btn" id="btn-save">保存笔记</button>
         <button class="fy-btn" id="btn-export">导出 Markdown</button>
         <button class="fy-btn" id="btn-clear">清空重写</button>
@@ -459,6 +470,85 @@
       navigator.clipboard.writeText(payload).then(done,fallback);
     }else{fallback();}
   });
+
+  // ============ 语音复述(Web Speech API) ============
+  var vbtn=document.getElementById('btn-voice');
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var recog=null,listening=false;
+  if(!SR){
+    vbtn.disabled=true;
+    vbtn.title='当前浏览器不支持语音识别,请使用 Chrome 或 Edge';
+    vbtn.style.opacity=.45;vbtn.style.cursor='not-allowed';
+  }else{
+    recog=new SR();
+    recog.lang='zh-CN';
+    recog.continuous=true;      // 长按期间持续识别
+    recog.interimResults=true;  // 实时显示中间结果
+    var finalBuf='';            // 本轮已确认文字
+    var interim='';             // 本轮未确认文字
+    var baseText='';            // 按下时文本框已有内容
+
+    recog.onresult=function(e){
+      interim='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        var r=e.results[i];
+        if(r.isFinal){finalBuf+=r[0].transcript;}
+        else{interim+=r[0].transcript;}
+      }
+      note.value=baseText+(baseText?'\n':'')+finalBuf+interim;
+    };
+    recog.onerror=function(e){
+      stopListen();
+      if(e.error==='not-allowed'){
+        setStatus('麦克风权限被拒绝,请在浏览器地址栏允许麦克风后重试',6000);
+      }else if(e.error!=='aborted'){
+        setStatus('语音识别出错:'+e.error,5000);
+      }
+    };
+    recog.onend=function(){
+      // 异常结束(如超时自动停):若仍在按住,重启;否则收尾
+      if(listening){try{recog.start();}catch(e){}}
+      else{finishListen();}
+    };
+
+    function startListen(){
+      if(listening)return;
+      listening=true;
+      finalBuf='';interim='';baseText=note.value;
+      try{
+        recog.start();
+        vbtn.classList.add('listening');
+        vbtn.innerHTML='● 录音中…松开结束';
+        setStatus('正在聆听,请开始复述');
+      }catch(e){
+        listening=false;
+        setStatus('无法启动语音识别,请重试',4000);
+      }
+    }
+    function stopListen(){
+      if(!listening)return;
+      listening=false;
+      try{recog.stop();}catch(e){finishListen();}
+    }
+    function finishListen(){
+      vbtn.classList.remove('listening');
+      vbtn.innerHTML='🎤 按住说话';
+      if(finalBuf){
+        note.value=baseText+(baseText?'\n':'')+finalBuf.trim();
+        setStatus('语音已转写并追加(可直接编辑修正),记得提交点评',6000);
+      }else{
+        note.value=baseText;
+        setStatus('没有识别到内容,再试一次?');
+      }
+    }
+    // 按住说话:鼠标 + 触摸 双支持
+    vbtn.addEventListener('mousedown',startListen);
+    vbtn.addEventListener('touchstart',function(e){e.preventDefault();startListen();},{passive:false});
+    window.addEventListener('mouseup',stopListen);
+    vbtn.addEventListener('touchend',function(e){e.preventDefault();stopListen();},{passive:false});
+    // 防止按住时拖出按钮导致录音不停
+    vbtn.addEventListener('mouseleave',function(){if(listening)stopListen();});
+  }
   function exportOne(text,name){
     var blob=new Blob([text],{type:'text/markdown;charset=utf-8'});
     var a=document.createElement('a');
