@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>观察席 · The Observatory — 前沿日报 The Frontier Daily</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f7f3ea; --paper-deep:#efe9db;
+    --ink:#1a1815; --ink-soft:#4a453d; --ink-faint:#8a8375;
+    --vermilion:#c0392b; --blue:#1f3a5f; --gold:#a67c2e; --teal:#16665a;
+    --rule:#d8d0bf; --rule-dark:#1a1815;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+    line-height:1.75; -webkit-font-smoothing:antialiased;
+  }
+  body::after{
+    content:''; position:fixed; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.035; pointer-events:none; z-index:9999;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 48px;}
+
+  /* ── 报头 ── */
+  header{padding-top:44px;}
+  .topline{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-faint); border-bottom:1px solid var(--rule); padding-bottom:10px;
+  }
+  .masthead{display:flex;align-items:baseline;justify-content:space-between;padding:34px 0 26px;}
+  .masthead h1{
+    font-family:"Noto Serif SC",serif; font-weight:900; font-size:52px;
+    letter-spacing:.06em; line-height:1;
+  }
+  .masthead h1 .en{
+    font-family:"Playfair Display",serif; font-weight:900; font-style:italic;
+    color:var(--vermilion); font-size:26px; letter-spacing:.02em; margin-left:16px;
+  }
+  .back-link{
+    font-size:12.5px;letter-spacing:.12em;color:var(--blue);
+    border-bottom:1px solid var(--blue);padding-bottom:2px;transition:all .25s;
+  }
+  .back-link:hover{color:var(--vermilion);border-color:var(--vermilion);}
+  .double-rule{border-top:3px solid var(--rule-dark);border-bottom:1px solid var(--rule-dark);height:6px;}
+
+  /* ── 导语区 + 黏性导航 ── */
+  .intro{padding:44px 0 18px;display:flex;justify-content:space-between;align-items:baseline;gap:24px;flex-wrap:wrap;}
+  .intro h2{font-family:"Noto Serif SC",serif;font-weight:900;font-size:30px;letter-spacing:.06em;}
+  .intro h2 span{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:19px;color:var(--vermilion);margin-left:12px;}
+  .intro .count{font-size:12px;letter-spacing:.16em;color:var(--ink-faint);}
+  .intro p{max-width:640px;font-size:14.5px;color:var(--ink-soft);margin-top:14px;}
+
+  .obs-nav{
+    position:sticky; top:0; z-index:50;
+    background:var(--paper);
+    border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
+    padding:13px 0; display:flex; gap:36px; flex-wrap:wrap;
+    font-size:11px; letter-spacing:.2em; color:var(--ink-faint);
+  }
+  .obs-nav a{transition:color .25s; white-space:nowrap;}
+  .obs-nav a:hover{color:var(--vermilion);}
+  .obs-nav a .n{font-family:"Playfair Display",serif;font-style:italic;font-size:13px;margin-right:7px;}
+
+  /* ── 板块通用 ── */
+  section{padding:56px 0 0; scroll-margin-top:56px;}
+  .kicker{
+    font-size:11px;letter-spacing:.28em;color:var(--vermilion);font-weight:700;margin-bottom:14px;
+  }
+  .kicker .dash{display:inline-block;width:26px;border-top:2px solid var(--vermilion);vertical-align:middle;margin-right:12px;}
+  section > h3{
+    font-family:"Noto Serif SC",serif; font-weight:900; font-size:38px;
+    letter-spacing:.04em; line-height:1.35; margin-bottom:18px; max-width:900px;
+  }
+  .standfirst{
+    font-family:"Noto Serif SC",serif; font-size:19px; line-height:1.85;
+    color:var(--ink-soft); margin-bottom:32px; max-width:820px;
+    padding-left:20px; border-left:2px solid var(--rule);
+  }
+
+  /* ── 观察板块：主文 + 侧栏 ── */
+  .observe-grid{display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:start;}
+  .obs-body h4{
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:21px;
+    margin:34px 0 12px; letter-spacing:.03em;
+  }
+  .obs-body h4::before{
+    content:''; display:inline-block; width:9px;height:9px;
+    background:var(--vermilion); margin-right:12px; vertical-align:middle;
+  }
+  .obs-body p{font-size:15px;line-height:1.95;color:var(--ink-soft);margin-bottom:16px;}
+  .obs-body p strong{color:var(--ink);font-weight:700;}
+
+  .obs-aside{border-top:2px solid var(--rule-dark);padding-top:20px;}
+  .obs-aside .aside-t{
+    font-size:11px;letter-spacing:.24em;color:var(--ink-faint);margin-bottom:16px;font-weight:700;
+  }
+  .mood-item{padding:14px 0;border-bottom:1px solid var(--rule);}
+  .mood-item:last-child{border-bottom:none;}
+  .mood-item .lbl{font-size:11.5px;letter-spacing:.14em;color:var(--ink-faint);margin-bottom:6px;}
+  .mood-item .val{font-family:"Noto Serif SC",serif;font-weight:700;font-size:15px;line-height:1.6;}
+  .mood-bar{height:3px;background:var(--rule);margin-top:9px;}
+  .mood-bar i{display:block;height:100%;background:var(--vermilion);width:0;transition:width 1.4s cubic-bezier(.16,1,.3,1);}
+  .loaded .mood-bar i{width:var(--w);}
+
+  /* ── 科普板块 ── */
+  .fig{margin:36px 0 40px;}
+  .fig-box{border:1px solid var(--rule);background:#fdfbf6;padding:22px 20px;}
+  .fig svg{display:block;width:100%;height:auto;}
+  figcaption{
+    font-size:11.5px;letter-spacing:.1em;color:var(--ink-faint);margin-top:12px;
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  }
+
+  .hl-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 48px;}
+  .hl-col h5{
+    font-size:11px;letter-spacing:.24em;font-weight:700;margin-bottom:18px;
+    padding-bottom:9px;border-bottom:1px solid var(--rule-dark);
+  }
+  .hl-col.point h5{color:var(--teal);}
+  .hl-col.hard h5{color:var(--vermilion);}
+  .hl-item{padding:0 0 22px;}
+  .hl-item .t{font-family:"Noto Serif SC",serif;font-weight:700;font-size:17px;margin-bottom:8px;letter-spacing:.02em;}
+  .hl-item .d{font-size:14.5px;line-height:1.85;color:var(--ink-soft);}
+
+  .metaphor{
+    margin:40px 0 0; background:var(--paper-deep);
+    border-left:3px solid var(--vermilion); padding:26px 30px;
+  }
+  .metaphor .m-t{
+    font-size:11px;letter-spacing:.24em;color:var(--vermilion);font-weight:700;margin-bottom:14px;
+  }
+  .metaphor p{font-family:"Noto Serif SC",serif;font-size:16.5px;line-height:1.9;color:var(--ink);}
+
+  /* ── 预设追问 ── */
+  .prompts{margin:44px 0 0;border-top:1px solid var(--rule);padding-top:26px;}
+  .prompts .p-t{font-size:11px;letter-spacing:.24em;color:var(--ink-faint);font-weight:700;margin-bottom:16px;}
+  .prompts ol{list-style:none;counter-reset:q;}
+  .prompts li{
+    counter-increment:q; position:relative; padding:11px 0 11px 44px;
+    font-size:15px;line-height:1.8;color:var(--ink-soft);
+    border-bottom:1px dotted var(--rule);
+  }
+  .prompts li::before{
+    content:counter(q); position:absolute;left:0;top:12px;
+    font-family:"Playfair Display",serif;font-style:italic;font-weight:700;
+    font-size:17px;color:var(--vermilion);
+  }
+  .prompts li:last-child{border-bottom:none;}
+
+  /* ── 我的笔记区（纸上的填空线） ── */
+  .note-block{
+    margin:44px 0 0; background:var(--paper-deep);
+    border-left:3px solid var(--vermilion); padding:26px 30px 22px;
+  }
+  .note-head{display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:16px;}
+  .note-label{font-size:11px;letter-spacing:.24em;color:var(--vermilion);font-weight:700;}
+  .note-hint{font-size:12px;color:var(--ink-faint);letter-spacing:.04em;}
+  .note-input{
+    display:block; width:100%; min-height:170px; resize:vertical;
+    border:none; outline:none; background:transparent; padding:0;
+    font-family:"Noto Sans SC",sans-serif; font-size:15px; color:var(--ink);
+    line-height:34px; letter-spacing:.01em;
+    background-image:repeating-linear-gradient(
+      transparent, transparent 33px, var(--rule) 33px, var(--rule) 34px
+    );
+    background-attachment:local;
+  }
+  .note-input::placeholder{color:var(--ink-faint);opacity:.75;}
+  .note-foot{
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
+    margin-top:16px;padding-top:14px;border-top:1px dotted var(--rule);
+    flex-wrap:wrap;
+  }
+  .stuck-btn{
+    font-family:"Noto Sans SC",sans-serif;font-size:12px;letter-spacing:.1em;
+    color:var(--ink-soft); background:transparent;
+    border:1px solid var(--rule-dark); padding:7px 16px; cursor:pointer;
+    transition:all .25s;
+  }
+  .stuck-btn:hover{color:var(--vermilion);border-color:var(--vermilion);}
+  .note-status{font-size:11.5px;letter-spacing:.1em;color:var(--ink-faint);}
+  .note-status .stamp{font-family:"Playfair Display",serif;font-style:italic;color:var(--teal);}
+
+  /* ── 板块分隔 ── */
+  .divider{
+    margin:72px 0 0; text-align:center; color:var(--ink-faint);
+    font-size:11px letter-spacing:.3em;
+  }
+  .divider span{display:inline-block;padding:0 18px;background:var(--paper);}
+  .divider::before{content:'';display:block;border-top:1px solid var(--rule);margin-bottom:-9px;}
+
+  /* ── 页脚 ── */
+  footer{background:var(--rule-dark);color:var(--paper);margin-top:80px;padding:44px 0;}
+  footer .wrap{display:flex;justify-content:space-between;gap:40px;flex-wrap:wrap;align-items:flex-end;}
+  .f-title{font-family:"Noto Serif SC",serif;font-weight:900;font-size:21px;letter-spacing:.06em;}
+  .f-title .en{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:14px;color:var(--vermilion);margin-left:10px;}
+  footer p{font-size:12px;line-height:1.9;color:rgba(247,243,234,.62);margin-top:10px;letter-spacing:.04em;}
+  .f-right{text-align:right;}
+
+  /* ── 入场动画 ── */
+  .fade{opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform .9s cubic-bezier(.16,1,.3,1);}
+  .loaded .fade{opacity:1;transform:none;}
+  .d1{transition-delay:.05s}.d2{transition-delay:.14s}.d3{transition-delay:.24s}.d4{transition-delay:.34s}
+
+  /* ── 响应式 ── */
+  @media (max-width:1020px){
+    .observe-grid{grid-template-columns:1fr;gap:36px;}
+    .hl-grid{grid-template-columns:1fr;gap:0;}
+    .masthead h1{font-size:42px;}
+    section > h3{font-size:31px;}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 24px;}
+    .masthead{flex-direction:column;align-items:flex-start;gap:16px;}
+    .masthead h1{font-size:34px;}
+    .obs-nav{gap:20px;}
+    section > h3{font-size:26px;}
+    .standfirst{font-size:17px;}
+    footer .wrap{flex-direction:column;align-items:flex-start;}
+    .f-right{text-align:left;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .fade{transition:none;opacity:1;transform:none;}
+    .mood-bar i{transition:none;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="topline">
+      <span>AI · 科技 · 前沿观察</span>
+      <span>Curated by QwenWork</span>
+      <span>Vol.009</span>
+    </div>
+    <div class="masthead">
+      <h1>观察席<span class="en">The Observatory</span></h1>
+      <a class="back-link" href="index.html">← 返回今日日报</a>
+    </div>
+    <div class="double-rule"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="intro">
+    <div>
+      <h2>今日观察与拆解<span>Observation &amp; Deconstruction</span></h2>
+      <p>每天从当日热点里挑一件值得拆开看的事：一半聊人和市场的反应，一半讲它到底是怎么做到的。看懂之后，留一块地方给自己。</p>
+    </div>
+    <div class="count">2026 / 09 / 13 · 星期日<br>随 Vol.009 同期发布</div>
+  </div>
+</div>
+
+<nav class="obs-nav">
+  <div class="wrap" style="display:flex;gap:36px;flex-wrap:wrap;">
+    <a href="#observe"><span class="n">I.</span>大众情绪观察</a>
+    <a href="#deconstruct"><span class="n">II.</span>今日科技拆解</a>
+    <a href="#note-1"><span class="n">III.</span>我的理解笔记</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ══ 板块一 ══ -->
+  <section id="observe">
+    <div class="fade d1">
+      <div class="kicker"><span class="dash"></span>板块一 · 大众情绪与行业演化</div>
+      <h3>苹果入局之后：屏下摄像头从「技术炫技」变成了「行业倒计时」</h3>
+      <p class="standfirst">一项技术被议论了七年都没成为主流，不是因为它不够好，而是因为一直没人替它按下那颗「可以量产了」的按钮。这个按钮在 9 月 10 日被按下了。</p>
+    </div>
+
+    <div class="observe-grid">
+      <div class="obs-body fade d2">
+        <h4>市场的兴奋，是一次集体松了口气</h4>
+        <p>iPhone Duo 发布当晚，讨论热度最高的不是它的折叠形态，而是「终于没有挖孔了」。这件事有意思的地方在于：<strong>屏下摄像头技术在安卓阵营已经存在了整整六年</strong>——中兴、三星、小米都做过，但市场从来没把它当成一件大事。苹果一出手，同样的技术突然就有了「里程碑」的重量。</p>
+        <p>这说明公众感知的从来不是技术本身的成熟度，而是<strong>技术有没有被一个足够有号召力的角色背书</strong>。大众不评估参数，他们评估信号。苹果的入局本身就是那个信号。</p>
+
+        <h4>安卓厂商的沉默，是一笔算得很清楚的账</h4>
+        <p>截至今天，市面上能买到的真全面屏手机只剩三款，全部出自中兴系，其中一款还长期缺货。这不是技术能力的问题——而是<strong>大多数厂商在主动等待</strong>。行业里流传的说法很直白：等苹果正式用上，其余友商自然会跟着大规模铺开。</p>
+        <p>背后的逻辑是风险定价。屏下摄像头意味着定制屏幕、特殊模组和算法适配，成本是普通方案的数倍。谁先大规模投入，谁就独自承担「消费者不买账」的试错成本。<strong>苹果替全行业支付了这笔试错费——包括它的妥协：宁可砍掉 Face ID 改用侧边指纹，也不让体验冒风险。</strong></p>
+
+        <h4>普通用户的感知，和技术叙事是错位的</h4>
+        <p>媒体在讨论「透光率」「自像素排布」「CPM 阴极打孔」，而真实用户会在意的是：<strong>为什么我的自拍在晚上有点糊</strong>。这两件事其实是同一件事，但中间隔着一层巨大的翻译落差。</p>
+        <p>更微妙的是，苹果这次的实际表现其实<strong>落后于中兴的第七代方案</strong>——多家实测指出 iPhone Duo 屏幕摄像头区域的色差明显，还带着可见的纱窗效应。但这件事在大众讨论里几乎消失了。因为「苹果首款」的叙事强度，足以覆盖掉「它不是最好的那款」这个事实。</p>
+
+        <h4>演化判断：接下来会发生什么</h4>
+        <p>2026 年 6 月《屏下摄像头手机技术要求和测试方法》团体标准已经实施，这是技术走向规范化的标准动作。按现有路线图，<strong>2027 年 iPhone 诞生二十周年大概率会出现真正的无孔机型，2028 年前后才是这项技术的市场爆发期</strong>。</p>
+        <p>值得留意的是另一种可能：当所有手机的正面都变成「一整块屏幕」之后，厂商的差异化和用户的注意力会转移到哪里？大概率是背面设计、影像能力和生态体验。<strong>一个竞争了十年的维度突然归零，这本身就是最大的行业变量。</strong></p>
+      </div>
+
+      <aside class="obs-aside fade d3">
+        <div class="aside-t">今日情绪切片 · MOOD INDEX</div>
+        <div class="mood-item">
+          <div class="lbl">从业者</div>
+          <div class="val">谨慎乐观</div>
+          <div class="mood-bar"><i style="--w:68%"></i></div>
+        </div>
+        <div class="mood-item">
+          <div class="lbl">消费者</div>
+          <div class="val">好奇，但说不清好在哪</div>
+          <div class="mood-bar"><i style="--w:52%"></i></div>
+        </div>
+        <div class="mood-item">
+          <div class="lbl">供应链</div>
+          <div class="val">等待放量信号</div>
+          <div class="mood-bar"><i style="--w:74%"></i></div>
+        </div>
+        <div class="mood-item">
+          <div class="lbl">资本市场</div>
+          <div class="val">已在交易「跟随者」预期</div>
+          <div class="mood-bar"><i style="--w:81%"></i></div>
+        </div>
+        <p style="font-size:11.5px;line-height:1.8;color:var(--ink-faint);margin-top:18px;">情绪指数基于媒体报道倾向、从业者公开表态与社区讨论热度综合估算，与日报热度指数口径一致。</p>
+      </aside>
+    </div>
+
+    <div class="note-block fade d4" id="note-1">
+      <div class="note-head">
+        <span class="note-label">我的理解 · YOUR TAKE</span>
+        <span class="note-hint">用自己的话讲一遍 · 一句话也算完成</span>
+      </div>
+      <textarea class="note-input" placeholder="合上上面的内容：今天这个技术，市场在兴奋什么？又在害怕什么？如果明天要讲给别人听，你会怎么说……"></textarea>
+      <div class="note-foot">
+        <button class="stuck-btn">这里我没说清</button>
+        <span class="note-status">尚未保存</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"><span>◆ ◆ ◆</span></div>
+
+  <!-- ══ 板块二 ══ -->
+  <section id="deconstruct">
+    <div class="fade d1">
+      <div class="kicker"><span class="dash"></span>板块二 · 今日科技拆解</div>
+      <h3>屏下摄像头：如何在一块完整的屏幕底下，藏一枚能用的摄像头</h3>
+      <p class="standfirst">问题的关键从来不是「把摄像头塞到屏幕下面」——那是物理上很容易的一步。难的是：屏幕要在显示的时候假装它不存在，在拍照的时候假装自己不存在。</p>
+    </div>
+
+    <figure class="fig fade d2">
+      <div class="fig-box">
+        <svg viewBox="0 0 680 375" role="img" aria-label="传统 OLED 与 CPM 打孔 OLED 的透光对比">
+          <title>OLED 阴极层的透光原理对比</title>
+          <desc>左侧传统连续阴极阻挡光线，右侧 CPM 技术在阴极开出透光窗口让光线抵达传感器</desc>
+
+          <text x="185" y="26" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="14" font-weight="700" fill="#4a453d">传统 OLED：连续阴极</text>
+          <text x="185" y="44" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#8a8375">整片金属铺满，光进不来</text>
+          <text x="495" y="26" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="14" font-weight="700" fill="#16665a">CPM OLED：阴极开窗口</text>
+          <text x="495" y="44" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#8a8375">字像素间隙留出透光孔</text>
+
+          <text x="185" y="72" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#c0392b">入射光</text>
+          <line x1="185" y1="78" x2="185" y2="112" stroke="#c0392b" stroke-width="1.5" marker-end="url(#ar)"/>
+
+          <rect x="105" y="114" width="160" height="15" fill="#fdfbf6" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="272" y="121.5" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">盖板玻璃</text>
+
+          <rect x="105" y="131" width="160" height="15" fill="#d8d0bf" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="272" y="138.5" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">偏振片</text>
+
+          <rect x="105" y="148" width="160" height="20" fill="#2c2925" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="272" y="158" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">阴极 MgAg</text>
+
+          <line x1="176" y1="150" x2="194" y2="166" stroke="#c0392b" stroke-width="1.8"/>
+          <line x1="194" y1="150" x2="176" y2="166" stroke="#c0392b" stroke-width="1.8"/>
+
+          <rect x="105" y="170" width="53" height="21" fill="#d98c7f" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="158" y="170" width="54" height="21" fill="#a9bd7a" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="212" y="170" width="53" height="21" fill="#8fb0cf" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="272" y="181" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">发光层 RGB</text>
+
+          <rect x="105" y="193" width="160" height="14" fill="#c8c2b4" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="272" y="200" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">阳极 + TFT</text>
+
+          <rect x="138" y="211" width="94" height="40" rx="3" fill="#e8e2d4" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="185" y="231" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#8a8375" dominant-baseline="central">传感器（进光不足）</text>
+
+          <text x="185" y="272" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#c0392b">画面发雾 · 暗光尤甚</text>
+
+          <text x="495" y="72" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#c0392b">入射光</text>
+
+          <line x1="450" y1="78" x2="450" y2="250" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="3,2.5"/>
+          <line x1="480" y1="78" x2="480" y2="250" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="3,2.5"/>
+          <line x1="510" y1="78" x2="510" y2="250" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="3,2.5"/>
+          <line x1="540" y1="78" x2="540" y2="250" stroke="#c0392b" stroke-width="1.4" stroke-dasharray="3,2.5"/>
+
+          <rect x="415" y="114" width="160" height="15" fill="#fdfbf6" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="582" y="121.5" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">盖板玻璃</text>
+
+          <rect x="415" y="131" width="160" height="15" fill="none" stroke="#8a8375" stroke-width="0.5" stroke-dasharray="3,2"/>
+          <text x="582" y="138.5" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#16665a" dominant-baseline="central">偏振片（折叠屏可去）</text>
+
+          <rect x="425" y="148" width="20" height="20" fill="#2c2925" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="455" y="148" width="20" height="20" fill="#2c2925" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="485" y="148" width="20" height="20" fill="#2c2925" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="515" y="148" width="20" height="20" fill="#2c2925" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="545" y="148" width="20" height="20" fill="#2c2925" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="582" y="158" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#16665a" dominant-baseline="central">阴极 CPM 打孔</text>
+
+          <rect x="415" y="170" width="53" height="21" fill="#d98c7f" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="468" y="170" width="54" height="21" fill="#a9bd7a" stroke="#8a8375" stroke-width="0.5"/>
+          <rect x="522" y="170" width="53" height="21" fill="#8fb0cf" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="582" y="181" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">发光层 RGB</text>
+
+          <rect x="415" y="193" width="160" height="14" fill="#c8c2b4" stroke="#8a8375" stroke-width="0.5"/>
+          <text x="582" y="200" font-family="Noto Sans SC, sans-serif" font-size="10" fill="#8a8375" dominant-baseline="central">阳极 + TFT</text>
+
+          <rect x="448" y="211" width="94" height="40" rx="3" fill="#1f3a5f" stroke="#1f3a5f" stroke-width="0.5"/>
+          <text x="495" y="231" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#f7f3ea" dominant-baseline="central">传感器（正常成像）</text>
+
+          <text x="495" y="272" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#16665a">白天已接近常规挖孔屏</text>
+
+          <line x1="60" y1="300" x2="620" y2="300" stroke="#d8d0bf" stroke-width="0.5"/>
+          <text x="60" y="322" font-family="Noto Serif SC, serif" font-size="12.5" font-weight="700" fill="#1a1815">CPM 自组装工艺（OTI Lumionics）</text>
+          <text x="60" y="344" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#4a453d">先用精细掩膜沉积 CPM 材料画出图案 → 再整体沉积 MgAg 金属 → CPM 覆盖处金属不附着，自然形成透光窗口</text>
+          <text x="60" y="364" font-family="Noto Sans SC, sans-serif" font-size="11" fill="#8a8375">整个流程只需多一道沉积腔，兼容现有 OLED 量产线</text>
+
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#c0392b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+      <figcaption>
+        <span>图示 · OLED 阴极层透光原理（传统方案 vs CPM 方案）</span>
+        <span>The Frontier Daily · 观察席</span>
+      </figcaption>
+    </figure>
+
+    <div class="hl-grid fade d3">
+      <div class="hl-col point">
+        <h5>设计亮点 · WHAT'S CLEVER</h5>
+        <div class="hl-item">
+          <div class="t">阴极不再是一整片</div>
+          <div class="d">加拿大公司 OTI Lumionics 的 CPM 材料像一层「不粘涂层」：先用精细掩膜把它铺在需要透光的位置，再整面沉积阴极金属——金属只在没有 CPM 的地方附着，于是一整片阴极上自然开出细密窗口。整个过程只需多加一道沉积腔，兼容现有产线。</div>
+        </div>
+        <div class="hl-item">
+          <div class="t">折叠屏捡到一个便宜</div>
+          <div class="d">直板机必须靠偏振片压制反光来保证户外可读性，而偏振片会同时吃掉可见光和红外光。折叠屏为了做薄、能弯，本来就改用了色彩校正膜和相位补偿材料——等于顺手解决了屏下取景最大的那个障碍。这是苹果选择先在折叠屏上落地的主因。</div>
+        </div>
+        <div class="hl-item">
+          <div class="t">算法补宇物理短板</div>
+          <div class="d">进光量的损失是物理事实，补不回来。厂商的解法是用 AI 去炫光、去重影、去雾，把「拍得到但看不清」修补成「看得过去」。白天已经很接近常规挖孔屏了。</div>
+        </div>
+      </div>
+
+      <div class="hl-col hard">
+        <h5>真正的难点 · THE HARD PART</h5>
+        <div class="hl-item">
+          <div class="t">透光率和画质是零和博弈</div>
+          <div class="d">显示要像素密、亮度匀；取光要遮挡少、孔洞多。同一个物理位置，两个相反的要求。这块区域的亮度天然低于周围、键不合格衡，就是常说的「纱窗效应」——要么 Pok.You inde.reduce 显示质量，要么.JPanel 成像质量，没有第三条路。</div>
+        </div>
+        <div class="hl-item">
+          <div class="t">红外双程穿透，难上一个量级</div>
+          <div class="d">自拍是单程——光进来一次就行。但 3D 结构光要把红外点阵打出去、再接收反射回来，光要穿过屏幕两次。损耗不是翻倍，是平方级的；散射还会糊掉深度图的精度。目前屏下区域的透光率约 5%，而要稳定支撑支付级人脸识别，理论需要到 22% 左右。这就是为什么 iPhone Duo 干脆没做屏下 Face ID。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="metaphor fade d4">
+      <div class="m-t">打个比方 · THE ANALOGY</div>
+      <p>把 OLED 屏幕想象成一间挂着厚窗帘的房间，摄像头是站在室内向外拍照的人。传统方案里，窗帘是全闭合的，光只能渗进来一点点，所以拍出来总是雾蒙蒙的。CPM 做的事，不是把窗帘做得更薄——那是另一道难题——而是在窗帘上精准地剪出一排细密的小孔。</p>
+      <p style="margin-top:14px;">站在房间外面的人看不见这些孔（它们太小了、排得太密），但在室内的人却能透过它们清清楚楚地看到外面。难就难在：孔剪多了，窗帘就不再是窗帘；剪少了，屋里的人还是看不清。而这排孔的密度，就是各家正在抢夺的手艺。</p>
+    </div>
+
+    <div class="prompts fade d4">
+      <div class="p-t">往哪儿想 · WHERE TO GO NEXT</div>
+      <ol>
+        <li>如果屏幕透光率再翻一倍，你觉得最先被改变的是手机，还是 AR 眼镜这类穿戴设备？为什么？</li>
+        <li>安卓厂商集体「等苹果先上」，你觉得这是技术保守，还是精明的商业算计？反过来如果是苹果等安卓先跑，结局会有什么不同？</li>
+        <li>苹果宁可用侧边指纹也不用屏下 Face ID——这个取舍暴露了它把「安全」和「体验」排成了什么顺序？</li>
+      </ol>
+    </div>
+
+    <div class="note-block fade d4">
+      <div class="note-head">
+        <span class="note-label">我的理解 · YOUR TAKE</span>
+        <span class="note-hint">不看原文，试着把这个原理讲一遍 · 卡在哪里就标在哪里</span>
+      </div>
+      <textarea class="note-input" placeholder="它到底是怎么做到「屏幕上一整块都看得见内容、但下面藏着摄像头」的？用你自己的话讲一遍试试……"></textarea>
+      <div class="note-foot">
+        <button class="stuck-btn">这里我没说清</button>
+        <span class="note-status">尚未保存</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="f-title">观察席<span class="en">The Observatory</span></div>
+      <p>前沿日报 · 副刊 | 本期随 Vol.009 同期发布<br>内容由 QwenWork 检索核实并编排，笔记仅存于你的本地浏览器</p>
+    </div>
+    <div class="f-right">
+      <p>2026 年 9 月 13 日 · 第 009 期<br>你的笔记属于你，我们一个字都不上传。</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('load',()=>{
+    document.body.classList.add('loaded');
+  });
+</script>
+</body>
+</html>

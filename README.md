@@ -22,7 +22,7 @@
 ├── README.md                  本文件
 ├── context.md                 项目背景、目标与范围
 ├── todos.md                   待办事项
-├── daily-ai-frontier/         站点源码(index.html 单文件 + archive.html + 头图)
+├── daily-ai-frontier/         站点源码(index.html + archive.html + lab/ 费曼实验室 + 头图)
 ├── docs/
 │   ├── requirements/          需求文档(含用户敲定的全部决策)
 │   ├── specs/                 视觉设计 / 技术架构 / 内容生产 SOP
@@ -38,6 +38,7 @@
 | 版本 | 日期 | 内容 |
 |---|---|---|
 | V0.0 | 2026-09-13 | 创刊九期(Vol.001~009)+ 完整项目管理体系 + 自动归档 + 往期回顾页 |
+| V0.1 | 2026-09-13 | 费曼实验室(每日概念拆解+复述笔记)+ 观察家专栏(市场情绪/大众叙事观点) |
 
 ## 运行依赖
 

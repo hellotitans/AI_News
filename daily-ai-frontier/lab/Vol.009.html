@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>费曼实验室 · Vol.009 — RSI 递归自我改进 | 前沿日报</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f7f3ea; --paper-deep:#efe9db; --paper-lab:#eef0ea;
+    --ink:#1a1815; --ink-soft:#4a453d; --ink-faint:#8a8375;
+    --teal:#16665a; --teal-deep:#0d4a41;
+    --vermilion:#c0392b;
+    --rule:#d8d0bf; --rule-dark:#1a1815;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+    line-height:1.8; -webkit-font-smoothing:antialiased;
+  }
+  body::after{
+    content:''; position:fixed; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.035; pointer-events:none; z-index:9999;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 40px;}
+
+  header{padding-top:44px;}
+  .topline{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-faint); border-bottom:1px solid var(--rule); padding-bottom:10px;
+  }
+  .masthead{display:flex;align-items:baseline;justify-content:space-between;padding:32px 0 24px;flex-wrap:wrap;gap:16px;}
+  .masthead h1{
+    font-family:"Noto Serif SC",serif; font-weight:900; font-size:46px; letter-spacing:.06em; line-height:1;
+  }
+  .masthead h1 .en{
+    font-family:"Playfair Display",serif; font-weight:900; font-style:italic;
+    color:var(--teal); font-size:24px; letter-spacing:.02em; margin-left:14px;
+  }
+  .lab-meta{text-align:right;font-size:12px;letter-spacing:.14em;color:var(--ink-soft);line-height:2;}
+  .lab-meta .vol{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--ink);}
+  .back-link{
+    font-size:12.5px;letter-spacing:.1em;color:var(--teal);
+    border-bottom:1px solid var(--teal);padding-bottom:2px;transition:all .25s;
+  }
+  .back-link:hover{color:var(--vermilion);border-color:var(--vermilion);}
+  .double-rule{border-top:3px solid var(--rule-dark);border-bottom:1px solid var(--rule-dark);height:6px;}
+
+  .topic-head{padding:48px 0 12px;}
+  .topic-head .kicker{
+    display:inline-flex;align-items:center;gap:12px;
+    font-size:12px;letter-spacing:.3em;color:var(--teal);font-weight:700;margin-bottom:22px;
+  }
+  .topic-head .kicker::before{content:'';width:42px;height:1px;background:var(--teal);}
+  .topic-head h2{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:46px;line-height:1.25;
+  }
+  .topic-head h2 .en-name{font-family:"Playfair Display",serif;font-style:italic;color:var(--teal);}
+  .topic-head .standfirst{
+    font-family:"Noto Serif SC",serif;font-size:18px;color:var(--ink-soft);margin-top:16px;line-height:1.9;
+  }
+
+  /* 概念卡 */
+  .concept-card{
+    background:var(--paper-lab);border:1px solid var(--rule);border-top:4px solid var(--teal);
+    padding:30px 34px;margin:30px 0;
+  }
+  .concept-card .cc-label{font-size:11px;letter-spacing:.32em;font-weight:700;color:var(--teal);margin-bottom:12px;}
+  .concept-card .cc-def{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:600;line-height:1.9;}
+  .concept-card .cc-analogy{
+    margin-top:16px;padding-top:16px;border-top:1px dashed var(--rule);
+    font-size:14.5px;color:var(--ink-soft);
+  }
+  .concept-card .cc-analogy b{color:var(--teal-deep);letter-spacing:.1em;font-size:12px;display:block;margin-bottom:4px;}
+
+  /* 原理拆解 */
+  .section-h{
+    display:flex;align-items:baseline;gap:14px;margin:52px 0 8px;
+  }
+  .section-h .no{
+    font-family:"Playfair Display",serif;font-style:italic;font-size:26px;font-weight:700;color:var(--teal);
+  }
+  .section-h h3{font-family:"Noto Serif SC",serif;font-weight:900;font-size:26px;letter-spacing:.05em;}
+  .section-h .en{font-family:"Playfair Display",serif;font-style:italic;font-size:15px;color:var(--ink-faint);margin-left:auto;}
+  .section-intro{font-size:13px;color:var(--ink-faint);letter-spacing:.05em;margin-bottom:22px;}
+
+  .layer{
+    display:grid;grid-template-columns:120px 1fr;gap:28px;
+    padding:26px 0;border-top:1px solid var(--rule);align-items:start;
+  }
+  .layer:last-of-type{border-bottom:1px solid var(--rule);}
+  .layer .lv{
+    font-family:"Playfair Display",serif;font-size:38px;font-weight:900;line-height:1;
+    color:transparent;-webkit-text-stroke:1.2px var(--teal);
+  }
+  .layer h4{font-family:"Noto Serif SC",serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+  .layer p{font-size:15px;color:var(--ink-soft);text-align:justify;}
+  .layer p b{color:var(--ink);font-weight:700;}
+
+  /* 新闻锚点 */
+  .anchors{list-style:none;margin-top:26px;}
+  .anchors li{
+    display:grid;grid-template-columns:30px 1fr;gap:12px;
+    padding:14px 0;border-bottom:1px dotted var(--rule);font-size:14px;color:var(--ink-soft);
+  }
+  .anchors li::before{content:'§';color:var(--teal);font-family:"Playfair Display",serif;}
+  .anchors li b{color:var(--ink);}
+
+  /* 常见误解 */
+  .myth{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border:1px solid var(--rule);margin-bottom:-1px;
+  }
+  .myth .wrong{padding:20px 24px;background:rgba(192,57,43,.05);}
+  .myth .right{padding:20px 24px;background:rgba(22,102,90,.06);border-left:1px solid var(--rule);}
+  .myth .tagline{font-size:10.5px;letter-spacing:.25em;font-weight:700;margin-bottom:8px;}
+  .myth .wrong .tagline{color:var(--vermilion);}
+  .myth .right .tagline{color:var(--teal);}
+  .myth p{font-size:13.5px;line-height:1.9;}
+  .myth .wrong p{color:var(--ink-soft);}
+  .myth .right p{color:var(--ink-soft);}
+  .myth .right p b{color:var(--teal-deep);}
+
+  /* 费曼时刻 */
+  .feynman{
+    margin-top:56px;background:var(--ink);color:#e8e2d4;padding:48px 0 44px;
+  }
+  .feynman .wrap{max-width:900px;}
+  .feynman .fy-kicker{font-size:11px;letter-spacing:.34em;color:#5fb3a5;font-weight:700;margin-bottom:10px;}
+  .feynman h3{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:32px;color:#f4efe3;letter-spacing:.04em;
+  }
+  .feynman h3 span{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:18px;color:#5fb3a5;margin-left:12px;}
+  .feynman .fy-intro{font-size:13.5px;color:#a89f8c;margin:10px 0 26px;line-height:2;}
+  .fy-q{
+    display:grid;grid-template-columns:52px 1fr;gap:18px;padding:16px 0;
+    border-top:1px solid rgba(232,226,212,.18);align-items:baseline;
+  }
+  .fy-q .qn{font-family:"Playfair Display",serif;font-style:italic;font-size:24px;color:#5fb3a5;}
+  .fy-q p{font-family:"Noto Serif SC",serif;font-size:16.5px;font-weight:600;color:#e8e2d4;line-height:1.8;}
+  .fy-q p small{display:block;font-family:"Noto Sans SC",sans-serif;font-weight:400;font-size:12px;color:#8d8571;margin-top:4px;letter-spacing:.05em;}
+  .fy-input-area{margin-top:30px;}
+  .fy-input-area label{font-size:12px;letter-spacing:.2em;color:#5fb3a5;font-weight:700;display:block;margin-bottom:10px;}
+  #feynman-note{
+    width:100%;min-height:180px;resize:vertical;
+    background:rgba(247,243,234,.06);border:1px solid rgba(232,226,212,.25);
+    color:#f4efe3;font-family:"Noto Sans SC",sans-serif;font-size:14.5px;line-height:2;
+    padding:18px 20px;outline:none;transition:border-color .3s;
+  }
+  #feynman-note:focus{border-color:#5fb3a5;}
+  #feynman-note::placeholder{color:#6e6754;}
+  .fy-actions{display:flex;gap:14px;margin-top:16px;flex-wrap:wrap;}
+  .fy-btn{
+    font-family:"Noto Sans SC",sans-serif;font-size:13px;letter-spacing:.14em;font-weight:500;
+    padding:10px 22px;cursor:pointer;transition:all .25s;border:1px solid #5fb3a5;background:transparent;color:#5fb3a5;
+  }
+  .fy-btn:hover{background:#5fb3a5;color:#12211d;}
+  .fy-btn.primary{background:#5fb3a5;color:#12211d;font-weight:700;}
+  .fy-btn.primary:hover{background:#7ccbbd;}
+  .fy-status{font-size:12px;color:#8d8571;letter-spacing:.08em;align-self:center;}
+  .fy-ref{margin-top:30px;}
+  .fy-ref summary{
+    cursor:pointer;font-size:13px;letter-spacing:.16em;color:#c8a95f;font-weight:700;
+    list-style:none;padding:10px 0;border-top:1px solid rgba(232,226,212,.18);
+  }
+  .fy-ref summary::-webkit-details-marker{display:none;}
+  .fy-ref summary::before{content:'▸ ';}
+  .fy-ref[open] summary::before{content:'▾ ';}
+  .fy-ref .ref-body{
+    background:rgba(200,169,95,.07);border:1px dashed rgba(200,169,95,.4);
+    padding:20px 24px;margin-top:10px;font-size:13.5px;line-height:2.1;color:#d8d0bf;
+  }
+  .fy-ref .ref-body li{margin-bottom:10px;margin-left:20px;}
+  .fy-ref .ref-body b{color:#e9d9ae;}
+
+  /* 学习档案 */
+  .archive-sec{margin-top:56px;padding-bottom:20px;}
+  .archive-sec .section-h{margin-top:0;}
+  #note-list{list-style:none;}
+  #note-list li{
+    display:grid;grid-template-columns:130px 1fr auto;gap:20px;align-items:baseline;
+    padding:16px 0;border-bottom:1px dotted var(--rule);font-size:13.5px;
+  }
+  #note-list .n-vol{font-family:"Playfair Display",serif;font-weight:700;color:var(--teal);}
+  #note-list .n-date{font-size:11px;color:var(--ink-faint);letter-spacing:.1em;}
+  #note-list .n-text{color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  #note-list .n-export{font-size:11.5px;letter-spacing:.1em;color:var(--teal);border-bottom:1px dotted var(--teal);cursor:pointer;white-space:nowrap;}
+  .empty-hint{font-size:13px;color:var(--ink-faint);padding:18px 0;border-bottom:1px dotted var(--rule);}
+
+  footer{margin-top:50px;background:var(--ink);color:#cfc8ba;padding:38px 0 34px;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;}
+  footer .f-title{font-family:"Noto Serif SC",serif;font-weight:900;font-size:18px;color:var(--paper);letter-spacing:.1em;}
+  footer .f-title .en{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:13px;margin-left:10px;color:#5fb3a5;}
+  footer p{font-size:11.5px;letter-spacing:.08em;line-height:2;color:#a39b8a;}
+
+  @media (max-width:720px){
+    .wrap{padding:0 22px;}
+    .masthead h1{font-size:34px;}
+    .topic-head h2{font-size:32px;}
+    .layer{grid-template-columns:1fr;gap:10px;}
+    .layer .lv{font-size:30px;}
+    .myth{grid-template-columns:1fr;}
+    .myth .right{border-left:none;border-top:1px solid var(--rule);}
+    #note-list li{grid-template-columns:1fr;gap:6px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="topline">
+    <span>费曼实验室 · 每日一个前沿概念</span>
+    <span>Learn by Explaining</span>
+    <span>2026 / 09 / 13</span>
+  </div>
+  <div class="masthead">
+    <h1>费曼实验室<span class="en">The Feynman Lab</span></h1>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <div class="lab-meta"><span class="vol">Vol.009</span> · 星期日<br>本期概念:RSI</div>
+      <a class="back-link" href="../">← 返回今日日报</a>
+    </div>
+  </div>
+  <div class="double-rule"></div>
+</header>
+
+<main class="wrap">
+
+  <div class="topic-head">
+    <div class="kicker">今日概念 · TODAY'S CONCEPT</div>
+    <h2>RSI:当 AI 开始<br><span class="en-name">自己改进自己</span></h2>
+    <p class="standfirst">本周所有头条——减速共识、机器人自进化、范式之争——底下都埋着同一个词。今天把它拆开。</p>
+  </div>
+
+  <!-- 概念卡 -->
+  <div class="concept-card">
+    <div class="cc-label">概念卡 · IN ONE SENTENCE</div>
+    <p class="cc-def">RSI(Recursive Self-Improvement,递归自我改进)指系统能够自己发现自身的不足、自己动手改进、改完自己验收,并把有效改进累积到下一轮——改进本身成为下一轮改进的加速器。</p>
+    <div class="cc-analogy">
+      <b>一个类比</b>
+      普通学生的学习流程是:老师出题→学生做题→老师批改。RSI 学生则自己出题、自己刷题、自己批改,还自己升级教材——而且每学会一课,下一课的教材就自动变难一点。老师的角色从「教学」退到了「决定这个学生该不该继续学」。
+    </div>
+  </div>
+
+  <!-- 原理拆解 -->
+  <div class="section-h">
+    <span class="no">No.1</span>
+    <h3>原理拆解</h3>
+    <span class="en">How It Works</span>
+  </div>
+  <p class="section-intro">三层递进:一个 RSI 系统转起来,需要什么;它和传统 AI 训练差在哪;以及它的力量与危险为什么是同一件事。</p>
+
+  <div class="layer">
+    <div class="lv">01</div>
+    <div>
+      <h4>第一层:循环的三个部件</h4>
+      <p>任何 RSI 系统都需要三个部件咬合运转:<b>生成器</b>(提出改进方案,新策略、新代码、新参数)、<b>评估器</b>(判断这个改进是否真的有效)、<b>累积器</b>(保留有效改进,作为下一轮的起点)。三者缺一,循环就退化成随机试错。生数科技本周发布的 Motus 2,「复盘 + 自改」对应的正是这三件:机器人失败后自己分析(评估)、自己改策略(生成)、改完保留(累积)。</p>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="lv">02</div>
+    <div>
+      <h4>第二层:与「训练」的根本区别</h4>
+      <p>传统大模型训练中,改进的方向盘在人类手里:人设计目标函数、人准备数据、人决定何时发布。RSI 把方向盘递给了系统本身——<b>改进的提出者、裁判和受益者是同一个主体</b>。这就是为什么大模型竞争被讨论为「从 Scaling Law(堆算力)转向 RSI(转飞轮)」:前者拼资源,后者拼循环效率。资源是线性的,循环是复利的。</p>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="lv">03</div>
+    <div>
+      <h4>第三层:力量与危险是同一枚硬币</h4>
+      <p>复利意味着:每一轮改进让下一轮更快。收益复利,风险同样复利——<b>当系统自我改进的速度超过人类审查的速度,留给「踩刹车」的时间窗口会被指数级压缩</b>。理解了这一点,昨天的头条就完全通了:最懂 RSI 的三家公司的掌门人,恰好同时开始讨论「放慢步伐」。他们讨论的不是哲学,是审查窗口的数学。</p>
+    </div>
+  </div>
+
+  <!-- 为什么重要 -->
+  <div class="section-h">
+    <span class="no">No.2</span>
+    <h3>为什么重要,锚在今天的新闻</h3>
+    <span class="en">Why It Matters</span>
+  </div>
+  <p class="section-intro">RSI 不是抽象概念,今天日报的至少三条新闻以它为轴:</p>
+  <ul class="anchors">
+    <li><b>头条 · 三巨头减速共识</b> —— 减速的对象正是 RSI 路线:能力迭代每快一分,人类的安全审查窗口就窄一分。</li>
+    <li><b>04 条 · 生数 Motus 2「自进化」</b> —— 具身智能领域第一个可运行的 RSI 闭环样本:复盘(评估)→ 自改(生成)→ 保留(累积)。</li>
+    <li><b>上期 · GPT-6 之后的范式之争</b> —— 「从 Scaling Law 到 RSI」的叙事拐点,说的就是方向盘从人递给系统的这场交接。</li>
+  </ul>
+
+  <!-- 常见误解 -->
+  <div class="section-h">
+    <span class="no">No.3</span>
+    <h3>常见误解</h3>
+    <span class="en">Common Myths</span>
+  </div>
+  <p class="section-intro">三个最容易搞错的地方——聊天的 credibility 就从这里来。</p>
+
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解一</div>
+      <p>「RSI 就是 AI 完全自己训练自己,不需要人类了。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>目前所有 RSI 系统仍依赖<b>人类搭建的算力、评估基础设施与安全边界</b>。是「自己在跑道上加速」,不是「自己修跑道」。</p>
+    </div>
+  </div>
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解二</div>
+      <p>「RSI 已经实现了,所以 AGI 马上来。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>自改进闭环目前只在<b>受限场景</b>(如灵巧操作、代码优化)被验证。开放场景下的通用 RSI 仍无可靠证据——这正是减速共识的争议空间。</p>
+    </div>
+  </div>
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解三</div>
+      <p>「自进化说明 AI 有了意识/求生欲。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>RSI 是<b>算法闭环</b>,不是动机。系统「想要」改进,和恒温器「想要」恒温,在哲学地位上是同类——尽管前者的后果大得多。</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- 费曼时刻 -->
+<section class="feynman">
+  <div class="wrap">
+    <div class="fy-kicker">费曼时刻 · THE FEYNMAN MOMENT</div>
+    <h3>现在,轮到你讲<span>If you can't explain it simply...</span></h3>
+    <p class="fy-intro">合上上面的内容,用自己的话回答下面三问。写得糙没关系——费曼法的价值恰恰在你卡壳的地方。<b style="color:#c8a95f;">写完后再展开参考要点自查,卡壳处即盲区。</b>笔记只存在你的浏览器里,点「导出」可下载 Markdown 留档。</p>
+
+    <div class="fy-q">
+      <div class="qn">Q1</div>
+      <p>用一句大白话说清 RSI 是什么?<small>提示:不许使用「递归」「自我改进」这两个词——逼自己换说法,才是真正的理解测试</small></p>
+    </div>
+    <div class="fy-q">
+      <div class="qn">Q2</div>
+      <p>一个 RSI 系统要转起来,需要哪三个部件?各自干什么?<small>提示:想想 Motus 2 机器人失败后做了什么</small></p>
+    </div>
+    <div class="fy-q">
+      <div class="qn">Q3</div>
+      <p>为什么最懂 AI 的三家公司老板,恰好在这个周末讨论「踩刹车」?<small>提示:复利 + 审查窗口,把这两件事连起来说</small></p>
+    </div>
+
+    <div class="fy-input-area">
+      <label for="feynman-note">我的复述 · MY EXPLANATION</label>
+      <textarea id="feynman-note" placeholder="Q1:……&#10;Q2:……&#10;Q3:……&#10;&#10;写完后,展开下方「参考要点」逐条对照。"></textarea>
+      <div class="fy-actions">
+        <button class="fy-btn primary" id="btn-save">保存笔记</button>
+        <button class="fy-btn" id="btn-export">导出 Markdown</button>
+        <button class="fy-btn" id="btn-clear">清空重写</button>
+        <span class="fy-status" id="fy-status"></span>
+      </div>
+    </div>
+
+    <details class="fy-ref">
+      <summary>写完了?展开参考要点,逐条自查(先写后看,顺序不能反)</summary>
+      <div class="ref-body">
+        <ol>
+          <li><b>一句话版本:</b>系统自己找自己的毛病、自己改、改完自己验收,而且每一轮改进都会让下一轮变得更快。</li>
+          <li><b>三部件:</b>生成(提出改进)→ 评估(检验是否有效)→ 累积(保留有效改进进入下一轮)。缺任何一件都退化为随机试错。</li>
+          <li><b>刹车逻辑:</b>RSI 的收益和风险都是复利的——当系统自我改进的速度超过人类审查的速度,「踩刹车」的时间窗口被指数级压缩。减速共识回应的不是今天的风险,是这条曲线的斜率。</li>
+          <li><b>加分项(聊资):</b>「方向盘从人递给系统」是 Scaling Law 与 RSI 的本质分野;Motus 2 的「复盘+自改」是具身领域第一个公开的可运行闭环样本;「算法闭环 ≠ 意识」这个辨析能让你在大多数饭局上显得格外清醒。</li>
+        </ol>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- 学习档案 -->
+<section class="wrap archive-sec">
+  <div class="section-h">
+    <span class="no">No.4</span>
+    <h3>我的学习档案</h3>
+    <span class="en">My Notes</span>
+  </div>
+  <p class="section-intro">以下复述记录保存在本浏览器中,换设备或清缓存会丢失——重要内容请记得导出,或直接贴到会话里和我讨论。</p>
+  <ul id="note-list"></ul>
+  <p class="empty-hint" id="empty-hint" style="display:none;">还没有任何笔记。完成上方复述并保存后,这里会留下你的第一笔。</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="f-title">费曼实验室<span class="en">The Feynman Lab</span></div>
+      <p>前沿日报 · 每日一个概念 | 笔记与导出均在本地浏览器完成</p>
+    </div>
+    <div>
+      <p>Vol.009 · 2026 年 9 月 13 日<br><a href="../" style="color:#cfc8ba;border-bottom:1px solid #a39b8a;">返回今日日报 →</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var VOL='Vol.009', DATE='2026-09-13', TOPIC='RSI:当 AI 开始自己改进自己';
+  var KEY='fd-note-'+VOL;
+  var note=document.getElementById('feynman-note');
+  var status=document.getElementById('fy-status');
+
+  function setStatus(msg,ms){
+    status.textContent=msg;
+    if(ms){setTimeout(function(){status.textContent='';},ms);}
+  }
+  function readNote(){
+    try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null;}catch(e){return null;}
+  }
+  function writeNote(text){
+    try{
+      localStorage.setItem(KEY,JSON.stringify({text:text,savedAt:new Date().toISOString()}));
+      return true;
+    }catch(e){return false;}
+  }
+  // 回填已有笔记
+  var existing=readNote();
+  if(existing&&existing.text){note.value=existing.text;setStatus('已载入你 '+existing.savedAt.slice(0,10)+' 保存的笔记');}
+
+  document.getElementById('btn-save').addEventListener('click',function(){
+    if(!note.value.trim()){setStatus('先写点什么再保存');return;}
+    setStatus(writeNote(note.value)?'已保存':'保存失败(浏览器存储不可用)',3000);
+    renderArchive();
+  });
+  document.getElementById('btn-clear').addEventListener('click',function(){
+    if(note.value&&!confirm('清空输入框内容?(已保存的笔记不受影响)'))return;
+    note.value='';setStatus('');
+  });
+  function exportOne(text,name){
+    var blob=new Blob([text],{type:'text/markdown;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+  }
+  document.getElementById('btn-export').addEventListener('click',function(){
+    var text=note.value.trim();
+    if(!text){setStatus('没有可导出的内容');return;}
+    exportOne('# 费曼实验室 · '+VOL+' · '+TOPIC+'\n\n'+DATE+'\n\n'+text+'\n','费曼笔记-'+VOL+'.md');
+  });
+
+  function renderArchive(){
+    var list=document.getElementById('note-list');
+    var empty=document.getElementById('empty-hint');
+    list.innerHTML='';
+    var found=[];
+    try{
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        if(k&&k.indexOf('fd-note-')===0){
+          try{
+            var v=JSON.parse(localStorage.getItem(k));
+            found.push({vol:k.replace('fd-note-',''),text:v.text||'',date:(v.savedAt||'').slice(0,10)});
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+    found.sort(function(a,b){return a.vol<b.vol?1:-1;});
+    if(!found.length){empty.style.display='block';return;}
+    empty.style.display='none';
+    found.forEach(function(f){
+      var li=document.createElement('li');
+      var left=document.createElement('div');
+      var vol=document.createElement('div');vol.className='n-vol';vol.textContent=f.vol;
+      var dt=document.createElement('div');dt.className='n-date';dt.textContent=f.date;
+      left.appendChild(vol);left.appendChild(dt);
+      var tx=document.createElement('div');tx.className='n-text';tx.textContent=f.text;
+      var ex=document.createElement('span');ex.className='n-export';ex.textContent='导出 ↧';
+      (function(ff){
+        ex.addEventListener('click',function(){
+          exportOne('# 费曼实验室 · '+ff.vol+'\n\n'+ff.date+'\n\n'+ff.text+'\n','费曼笔记-'+ff.vol+'.md');
+        });
+      })(f);
+      li.appendChild(left);li.appendChild(tx);li.appendChild(ex);
+      list.appendChild(li);
+    });
+  }
+  renderArchive();
+})();
+</script>
+</body>
+</html>

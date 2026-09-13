@@ -87,67 +87,29 @@
     height:6px;
   }
 
-  /* ============ 关联页入口(费曼实验室 / 往期回顾) ============ */
-  .entry-row{
-    padding:14px 0 26px;
-    display:grid;grid-template-columns:1fr 1fr;gap:14px;
-  }
-  .entry-card{
-    display:flex;align-items:baseline;gap:14px;
+  /* ============ 副刊入口组（观察席 · 往期回顾） ============ */
+  .archive-entry{padding:14px 0 26px;display:flex;flex-direction:column;gap:7px;}
+  .archive-link{
+    display:flex;align-items:baseline;gap:18px;
     padding:13px 20px;
     border:1px solid var(--rule);
     background:rgba(255,255,255,.35);
     transition:all .3s;
   }
-  .entry-card:hover{border-color:var(--vermilion);background:rgba(255,255,255,.6);}
-  .lab-entry{border-left:3px solid var(--teal);}
-  .lab-entry:hover{border-color:var(--teal);}
-  .e-label{
-    font-size:12px;letter-spacing:.22em;font-weight:700;color:var(--vermilion);
+  .archive-link:hover{border-color:var(--vermilion);background:rgba(255,255,255,.6);}
+  .archive-label{
+    font-size:12px;letter-spacing:.24em;font-weight:700;color:var(--vermilion);
     white-space:nowrap;
   }
-  .e-label.alt{color:var(--teal);}
-  .lab-entry .e-label{color:var(--teal);}
-  .e-hint{
+  .archive-hint{
     font-size:12.5px;color:var(--ink-faint);letter-spacing:.06em;
-    flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    flex:1;
   }
-  .e-arrow{
+  .archive-arrow{
     font-family:"Playfair Display",serif;font-size:17px;color:var(--ink-faint);
     transition:all .3s;
   }
-  .entry-card:hover .e-arrow{color:var(--vermilion);transform:translateX(4px);}
-
-  /* ============ 观察家专栏 ============ */
-  .observer{padding:64px 0 30px;}
-  .observer-head{
-    display:flex;align-items:baseline;justify-content:space-between;
-    margin-bottom:8px;
-  }
-  .observer-head h3{
-    font-family:"Noto Serif SC",serif;font-weight:900;font-size:30px;letter-spacing:.08em;
-  }
-  .observer-head h3 span{
-    font-family:"Playfair Display",serif;font-style:italic;font-weight:400;
-    font-size:19px;color:var(--teal);margin-left:14px;letter-spacing:.04em;
-  }
-  .observer-head .op-tag{
-    font-size:10.5px;letter-spacing:.22em;font-weight:700;color:var(--paper);
-    background:var(--ink);padding:4px 12px 3px;
-  }
-  .observer-body{
-    border-top:3px solid var(--rule-dark);
-    padding-top:26px;
-    font-family:"Noto Serif SC",serif;
-    font-size:17px;font-weight:600;line-height:2.1;color:var(--ink);
-    text-align:justify;
-  }
-  .observer-body em{color:var(--teal);font-style:normal;border-bottom:2px solid rgba(22,102,90,.35);}
-  .observer-sig{
-    display:flex;justify-content:space-between;align-items:baseline;
-    margin-top:18px;padding-top:12px;border-top:1px solid var(--rule);
-    font-size:11.5px;letter-spacing:.14em;color:var(--ink-faint);
-  }
+  .archive-link:hover .archive-arrow{color:var(--vermilion);transform:translateX(4px);}
 
   /* ============ 头条 ============ */
   .hero{padding:56px 0 20px;display:grid;grid-template-columns:1fr 340px;gap:56px;}
@@ -385,18 +347,18 @@
   <div class="double-rule"></div>
 </header>
 
-<!-- ============ 关联页入口(费曼实验室 / 往期回顾) ============ -->
+<!-- ============ 副刊入口组 ============ -->
 <div class="wrap">
-  <div class="entry-row fade-up d2">
-    <a href="lab/Vol.009.html" class="entry-card lab-entry">
-      <span class="e-label">费曼实验室 · The Feynman Lab</span>
-      <span class="e-hint">今日概念:RSI —— 读懂头条,再讲给我听</span>
-      <span class="e-arrow">→</span>
+  <div class="archive-entry fade-up d2">
+    <a href="observatory.html" class="archive-link">
+      <span class="archive-label">观察席 · The Observatory</span>
+      <span class="archive-hint">今日情绪观察 + 科技拆解 · 留出位置给你复述</span>
+      <span class="archive-arrow">→</span>
     </a>
-    <a href="archive.html" class="entry-card">
-      <span class="e-label alt">往期回顾 · The Archive</span>
-      <span class="e-hint">历期头条索引 · 自创刊号 Vol.001 起</span>
-      <span class="e-arrow">→</span>
+    <a href="archive.html" class="archive-link">
+      <span class="archive-label">往期回顾 · The Archive</span>
+      <span class="archive-hint">历期头条索引 · 自创刊号 Vol.001 起</span>
+      <span class="archive-arrow">→</span>
     </a>
   </div>
 </div>
@@ -569,21 +531,6 @@
       <a class="src-link" href="https://www.163.com/dy/article/L6LDGGI50552IBJ1.html" target="_blank" rel="noopener">来源:网易科技 ↗</a>
     </div>
   </article>
-</section>
-
-<!-- ============ 观察家专栏 ============ -->
-<section class="wrap observer">
-  <div class="observer-head">
-    <h3>本期观察<span>The Observer</span></h3>
-    <span class="op-tag">观点 · OPINION</span>
-  </div>
-  <div class="observer-body fade-up d4">
-    三巨头同日喊「慢一点」,资本市场听到的却是「快逃」——这个周末,交易员失眠的问题不再是「AGI 会不会来」,而是<em>「AI 交易会不会结束」</em>。大众叙事在一周内完成了从「欢迎来到 AGI 时代」到「AI 失控事件」的摆锤,而叙事的摆幅,从来比事实的幅度大。值得留意三个细节:喊减速的 Anthropic 并未放缓自己的 IPO;呼吁减速的是技术领先者,追赶者反而拿到了罕见的时间窗口;散户与机构的分歧正在拉大。如果周一只是恐慌一日游,叙事会重新收紧;只有当「减速」变成监管语言,估值体系才会真正重估。<em>情绪是钟摆,但摆锤握在财报手里。</em>
-  </div>
-  <div class="observer-sig">
-    <span>撰述:前沿日报观察家</span>
-    <span>以上为观点评论,非事实陈述 · 与新闻区严格区隔</span>
-  </div>
 </section>
 
 <footer>
