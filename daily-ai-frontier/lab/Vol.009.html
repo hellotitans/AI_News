@@ -110,6 +110,7 @@
     padding:14px 0;border-bottom:1px dotted var(--rule);font-size:14px;color:var(--ink-soft);
   }
   .anchors li::before{content:'§';color:var(--teal);font-family:"Playfair Display",serif;}
+  .anchors li .a-body{line-height:1.9;}
   .anchors li b{color:var(--ink);}
 
   /* 常见误解 */
@@ -290,9 +291,9 @@
   </div>
   <p class="section-intro">RSI 不是抽象概念,今天日报的至少三条新闻以它为轴:</p>
   <ul class="anchors">
-    <li><b>头条 · 三巨头减速共识</b> —— 减速的对象正是 RSI 路线:能力迭代每快一分,人类的安全审查窗口就窄一分。</li>
-    <li><b>04 条 · 生数 Motus 2「自进化」</b> —— 具身智能领域第一个可运行的 RSI 闭环样本:复盘(评估)→ 自改(生成)→ 保留(累积)。</li>
-    <li><b>上期 · GPT-6 之后的范式之争</b> —— 「从 Scaling Law 到 RSI」的叙事拐点,说的就是方向盘从人递给系统的这场交接。</li>
+    <li><span class="a-body"><b>头条 · 三巨头减速共识</b> —— 减速的对象正是 RSI 路线:能力迭代每快一分,人类的安全审查窗口就窄一分。</span></li>
+    <li><span class="a-body"><b>04 条 · 生数 Motus 2「自进化」</b> —— 具身智能领域第一个可运行的 RSI 闭环样本:复盘(评估)→ 自改(生成)→ 保留(累积)。</span></li>
+    <li><span class="a-body"><b>上期 · GPT-6 之后的范式之争</b> —— 「从 Scaling Law 到 RSI」的叙事拐点,说的就是方向盘从人递给系统的这场交接。</span></li>
   </ul>
 
   <!-- 常见误解 -->
@@ -341,7 +342,7 @@
   <div class="wrap">
     <div class="fy-kicker">费曼时刻 · THE FEYNMAN MOMENT</div>
     <h3>现在,轮到你讲<span>If you can't explain it simply...</span></h3>
-    <p class="fy-intro">合上上面的内容,用自己的话回答下面三问。写得糙没关系——费曼法的价值恰恰在你卡壳的地方。<b style="color:#c8a95f;">写完后再展开参考要点自查,卡壳处即盲区。</b>笔记只存在你的浏览器里,点「导出」可下载 Markdown 留档。</p>
+    <p class="fy-intro">合上上面的内容,用自己的话回答下面三问。写得糙没关系——费曼法的价值恰恰在你卡壳的地方。写完先<b style="color:#c8a95f;">对照参考要点自查</b>,再<b style="color:#c8a95f;">「提交点评」获得导师即时反馈</b>:哪里讲对了、哪里是盲区、哪里值得深挖。笔记只存在你的浏览器里,可随时导出 Markdown 留档。</p>
 
     <div class="fy-q">
       <div class="qn">Q1</div>
@@ -360,7 +361,8 @@
       <label for="feynman-note">我的复述 · MY EXPLANATION</label>
       <textarea id="feynman-note" placeholder="Q1:……&#10;Q2:……&#10;Q3:……&#10;&#10;写完后,展开下方「参考要点」逐条对照。"></textarea>
       <div class="fy-actions">
-        <button class="fy-btn primary" id="btn-save">保存笔记</button>
+        <button class="fy-btn primary" id="btn-submit">提交点评</button>
+        <button class="fy-btn" id="btn-save">保存笔记</button>
         <button class="fy-btn" id="btn-export">导出 Markdown</button>
         <button class="fy-btn" id="btn-clear">清空重写</button>
         <span class="fy-status" id="fy-status"></span>
@@ -439,6 +441,23 @@
   document.getElementById('btn-clear').addEventListener('click',function(){
     if(note.value&&!confirm('清空输入框内容?(已保存的笔记不受影响)'))return;
     note.value='';setStatus('');
+  });
+  // 提交点评:复制到剪贴板,回到对话粘贴即获即时点评
+  document.getElementById('btn-submit').addEventListener('click',function(){
+    var text=note.value.trim();
+    if(!text){setStatus('先写点什么再提交');return;}
+    var payload='【费曼时刻 · '+VOL+' · '+TOPIC+'】\n请作为费曼导师点评我的复述:对照概念要点,指出我理解到位的地方、盲区或偏差,以及值得深挖的延伸点。\n\n'+text;
+    var done=function(){setStatus('已复制!回到 QwenWork 对话粘贴发送,即可获得即时点评',8000);};
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=payload;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done();}
+      catch(e){setStatus('复制失败,请全选文本框内容手动复制');}
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(payload).then(done,fallback);
+    }else{fallback();}
   });
   function exportOne(text,name){
     var blob=new Blob([text],{type:'text/markdown;charset=utf-8'});
