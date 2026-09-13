@@ -166,6 +166,8 @@
   .fy-btn.primary:hover{background:#7ccbbd;}
   .fy-btn.voice{border-color:#c8a95f;color:#c8a95f;}
   .fy-btn.voice:hover{background:#c8a95f;color:#1a1608;}
+  .fy-btn.review{border-color:#8a9bc4;color:#8a9bc4;}
+  .fy-btn.review:hover{background:#8a9bc4;color:#101522;}
   .fy-btn.voice.listening{
     background:var(--vermilion);border-color:var(--vermilion);color:#fff;
     animation:voice-pulse 1.2s ease-in-out infinite;
@@ -201,6 +203,13 @@
   #note-list .n-vol{font-family:"Playfair Display",serif;font-weight:700;color:var(--teal);}
   #note-list .n-date{font-size:11px;color:var(--ink-faint);letter-spacing:.1em;}
   #note-list .n-text{color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  #note-list .n-review{
+    margin-top:8px;padding:10px 14px;
+    background:rgba(138,155,196,.1);border-left:2px solid #8a9bc4;
+    font-size:12px;line-height:1.9;color:var(--ink-faint);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  #note-list .n-review b{color:#5a6b99;letter-spacing:.12em;font-size:11px;margin-right:6px;}
   #note-list .n-export{font-size:11.5px;letter-spacing:.1em;color:var(--teal);border-bottom:1px dotted var(--teal);cursor:pointer;white-space:nowrap;}
   .empty-hint{font-size:13px;color:var(--ink-faint);padding:18px 0;border-bottom:1px dotted var(--rule);}
 
@@ -373,6 +382,7 @@
       <div class="fy-actions">
         <button class="fy-btn primary" id="btn-submit">提交点评</button>
         <button class="fy-btn voice" id="btn-voice" title="按住说话,松开结束(Chrome/Edge)">🎤 按住说话</button>
+        <button class="fy-btn review" id="btn-review" title="粘贴导师从对话中回写的点评包,与本篇复述配对存档">📥 粘贴导师点评</button>
         <button class="fy-btn" id="btn-save">保存笔记</button>
         <button class="fy-btn" id="btn-export">导出 Markdown</button>
         <button class="fy-btn" id="btn-clear">清空重写</button>
@@ -436,7 +446,26 @@
   }
   function writeNote(text){
     try{
-      localStorage.setItem(KEY,JSON.stringify({text:text,savedAt:new Date().toISOString()}));
+      var prev=readNote()||{};
+      localStorage.setItem(KEY,JSON.stringify({
+        text:text,
+        review:prev.review||'',
+        reviewAt:prev.reviewAt||'',
+        savedAt:new Date().toISOString()
+      }));
+      return true;
+    }catch(e){return false;}
+  }
+  function writeReview(review){
+    try{
+      var prev=readNote()||{};
+      if(!prev.text){return 'no-note';}
+      localStorage.setItem(KEY,JSON.stringify({
+        text:prev.text,
+        review:review,
+        reviewAt:new Date().toISOString(),
+        savedAt:prev.savedAt||new Date().toISOString()
+      }));
       return true;
     }catch(e){return false;}
   }
@@ -469,6 +498,34 @@
     if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(payload).then(done,fallback);
     }else{fallback();}
+  });
+
+  // ============ 粘贴导师点评:从剪贴板/手动粘贴,与复述配对存档 ============
+  document.getElementById('btn-review').addEventListener('click',function(){
+    var n=readNote();
+    if(!n||!n.text){setStatus('请先保存复述笔记,再粘贴点评(两者需配对)');return;}
+    var doSave=function(payload){
+      // 校验点评包格式:导师以「导师点评包」标记回写
+      var ok=false,content='';
+      if(payload){
+        var m=payload.match(/【导师点评包[\s\S]*】\n([\s\S]*)/);
+        if(m){content=m[1].trim();ok=true;}
+        else if(payload.indexOf('费曼时刻')===-1&&payload.length>40){content=payload.trim();ok=true;}
+      }
+      if(!ok){
+        // 格式不符:弹出粘贴框手动输入
+        var raw=prompt('剪贴板中没有检测到点评内容。\n请粘贴导师点评全文(可从对话中复制):');
+        if(!raw||!raw.trim())return;
+        content=raw.trim();
+      }
+      var r=writeReview(content);
+      if(r==='no-note'){setStatus('请先保存复述笔记,再粘贴点评');return;}
+      setStatus(r?'✓ 点评已与本篇复述配对存档,见「我的学习档案」':'保存失败(浏览器存储不可用)',6000);
+      renderArchive();
+    };
+    if(navigator.clipboard&&navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(t){doSave(t);},function(){doSave('');});
+    }else{doSave('');}
   });
 
   // ============ 语音复述(Web Speech API) ============
@@ -573,7 +630,7 @@
         if(k&&k.indexOf('fd-note-')===0){
           try{
             var v=JSON.parse(localStorage.getItem(k));
-            found.push({vol:k.replace('fd-note-',''),text:v.text||'',date:(v.savedAt||'').slice(0,10)});
+            found.push({vol:k.replace('fd-note-',''),text:v.text||'',review:v.review||'',date:(v.savedAt||'').slice(0,10)});
           }catch(e){}
         }
       }
@@ -587,14 +644,23 @@
       var vol=document.createElement('div');vol.className='n-vol';vol.textContent=f.vol;
       var dt=document.createElement('div');dt.className='n-date';dt.textContent=f.date;
       left.appendChild(vol);left.appendChild(dt);
+      var mid=document.createElement('div');
       var tx=document.createElement('div');tx.className='n-text';tx.textContent=f.text;
+      mid.appendChild(tx);
+      if(f.review){
+        var rv=document.createElement('div');rv.className='n-review';
+        rv.innerHTML='<b>导师点评</b> '+f.review.replace(/</g,'&lt;').substring(0,120)+(f.review.length>120?'…':'');
+        mid.appendChild(rv);
+      }
       var ex=document.createElement('span');ex.className='n-export';ex.textContent='导出 ↧';
       (function(ff){
         ex.addEventListener('click',function(){
-          exportOne('# 费曼实验室 · '+ff.vol+'\n\n'+ff.date+'\n\n'+ff.text+'\n','费曼笔记-'+ff.vol+'.md');
+          var out='# 费曼实验室 · '+ff.vol+'\n\n'+ff.date+'\n\n## 我的复述\n\n'+ff.text+'\n';
+          if(ff.review){out+='\n## 导师点评\n\n'+ff.review+'\n';}
+          exportOne(out,'费曼笔记-'+ff.vol+'.md');
         });
       })(f);
-      li.appendChild(left);li.appendChild(tx);li.appendChild(ex);
+      li.appendChild(left);li.appendChild(mid);li.appendChild(ex);
       list.appendChild(li);
     });
   }
