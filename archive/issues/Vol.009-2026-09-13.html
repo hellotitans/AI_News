@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前沿日报 · The Frontier Daily — 2026年9月13日</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f7f3ea;
+    --paper-deep:#efe9db;
+    --ink:#1a1815;
+    --ink-soft:#4a453d;
+    --ink-faint:#8a8375;
+    --vermilion:#c0392b;
+    --vermilion-deep:#96281b;
+    --blue:#1f3a5f;
+    --gold:#a67c2e;
+    --teal:#16665a;
+    --rule:#d8d0bf;
+    --rule-dark:#1a1815;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+    font-weight:400;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* 纸张肌理 */
+  body::after{
+    content:'';
+    position:fixed;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.035;
+    pointer-events:none;z-index:9999;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 48px;}
+
+  /* ============ 报头 ============ */
+  header{padding-top:44px;}
+  .topline{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-faint);
+    border-bottom:1px solid var(--rule);
+    padding-bottom:10px;
+  }
+  .masthead{
+    display:flex;align-items:baseline;justify-content:space-between;
+    padding:34px 0 26px;
+  }
+  .masthead h1{
+    font-family:"Noto Serif SC",serif;
+    font-weight:900;
+    font-size:64px;
+    letter-spacing:.06em;
+    line-height:1;
+  }
+  .masthead h1 .en{
+    font-family:"Playfair Display",serif;
+    font-weight:900;
+    font-style:italic;
+    color:var(--vermilion);
+    font-size:30px;
+    letter-spacing:.02em;
+    margin-left:18px;
+  }
+  .issue-info{
+    text-align:right;
+    font-size:12px;letter-spacing:.14em;color:var(--ink-soft);
+    line-height:2;
+  }
+  .issue-info .date{
+    font-family:"Playfair Display",serif;
+    font-size:22px;font-weight:700;color:var(--ink);letter-spacing:.06em;
+  }
+  .double-rule{
+    border-top:3px solid var(--rule-dark);
+    border-bottom:1px solid var(--rule-dark);
+    height:6px;
+  }
+
+  /* ============ 头条 ============ */
+  .hero{padding:56px 0 20px;display:grid;grid-template-columns:1fr 340px;gap:56px;}
+  .hero-main .kicker{
+    display:inline-flex;align-items:center;gap:12px;
+    font-size:12px;letter-spacing:.3em;color:var(--vermilion);
+    font-weight:700;margin-bottom:26px;
+  }
+  .kicker::before{content:'';display:block;width:42px;height:1px;background:var(--vermilion);}
+  .hero-main h2{
+    font-family:"Noto Serif SC",serif;
+    font-weight:900;
+    font-size:56px;
+    line-height:1.22;
+    letter-spacing:.01em;
+    margin-bottom:8px;
+  }
+  .hero-main h2 .en-name{
+    font-family:"Playfair Display",serif;
+    font-style:italic;font-weight:700;
+    color:var(--vermilion);
+  }
+  .hero-sub{
+    font-family:"Noto Serif SC",serif;
+    font-size:22px;font-weight:600;color:var(--ink-soft);
+    margin:18px 0 30px;
+    line-height:1.6;
+  }
+  .hero-fig{margin:0 0 34px;}
+  .hero-fig img{width:100%;display:block;filter:sepia(.06);}
+  .hero-fig figcaption{
+    font-size:11.5px;color:var(--ink-faint);letter-spacing:.08em;
+    padding-top:10px;border-bottom:1px solid var(--rule);
+    display:flex;justify-content:space-between;
+  }
+  .hero-body p{font-size:16.5px;color:var(--ink-soft);margin-bottom:20px;text-align:justify;}
+  .hero-body p:first-of-type::first-letter{
+    font-family:"Playfair Display","Noto Serif SC",serif;
+    font-size:74px;font-weight:900;color:var(--vermilion);
+    float:left;line-height:.78;padding:10px 14px 0 0;
+  }
+  .stats-row{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-top:2px solid var(--rule-dark);border-bottom:1px solid var(--rule);
+    margin:34px 0;
+  }
+  .stat{
+    padding:20px 22px;border-right:1px solid var(--rule);
+  }
+  .stat:last-child{border-right:none;}
+  .stat .num{
+    font-family:"Playfair Display",serif;
+    font-size:38px;font-weight:900;line-height:1.1;color:var(--ink);
+  }
+  .stat .num em{font-style:normal;font-size:20px;color:var(--vermilion);}
+  .stat .label{font-size:12px;letter-spacing:.1em;color:var(--ink-faint);margin-top:6px;}
+
+  /* 编辑点评 */
+  .editor-note{
+    background:var(--paper-deep);
+    border-left:4px solid var(--vermilion);
+    padding:28px 32px;
+    margin-top:34px;
+    position:relative;
+  }
+  .editor-note .note-tag{
+    font-size:11px;letter-spacing:.32em;font-weight:700;color:var(--vermilion);
+    text-transform:uppercase;margin-bottom:12px;
+  }
+  .editor-note p{
+    font-family:"Noto Serif SC",serif;
+    font-size:16px;line-height:2;color:var(--ink);
+    font-weight:600;
+  }
+  .editor-note p em{color:var(--vermilion-deep);}
+
+  /* 头条侧栏 */
+  .hero-side{border-left:1px solid var(--rule);padding-left:40px;padding-top:8px;}
+  .meta-block{margin-bottom:38px;}
+  .meta-block h4{
+    font-size:11px;letter-spacing:.3em;color:var(--ink-faint);
+    font-weight:700;margin-bottom:16px;text-transform:uppercase;
+  }
+  .meta-block .big-heat{
+    font-family:"Playfair Display",serif;font-size:88px;font-weight:900;
+    color:var(--vermilion);line-height:1;
+  }
+  .heat-bar{
+    height:5px;background:var(--rule);margin:16px 0 8px;position:relative;overflow:hidden;
+  }
+  .heat-bar i{
+    position:absolute;left:0;top:0;bottom:0;background:var(--vermilion);
+    width:0;transition:width 1.6s cubic-bezier(.16,1,.3,1) .5s;
+  }
+  .meta-list{list-style:none;font-size:13.5px;color:var(--ink-soft);}
+  .meta-list li{
+    display:flex;justify-content:space-between;gap:16px;
+    padding:9px 0;border-bottom:1px dotted var(--rule);
+  }
+  .meta-list li b{font-weight:500;color:var(--ink);}
+  .meta-list li span{color:var(--ink-faint);text-align:right;}
+  .src-link{
+    display:inline-block;font-size:12.5px;letter-spacing:.12em;
+    color:var(--blue);border-bottom:1px solid var(--blue);
+    padding-bottom:2px;margin-top:6px;transition:all .25s;
+  }
+  .src-link:hover{color:var(--vermilion);border-color:var(--vermilion);}
+
+  /* ============ 热度榜 ============ */
+  .ranking{padding:64px 0 30px;}
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .section-head h3{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:34px;letter-spacing:.08em;
+  }
+  .section-head h3 span{
+    font-family:"Playfair Display",serif;font-style:italic;font-weight:400;
+    font-size:20px;color:var(--vermilion);margin-left:14px;letter-spacing:.04em;
+  }
+  .section-head .hint{font-size:12px;letter-spacing:.18em;color:var(--ink-faint);}
+  .rank-item{
+    display:grid;
+    grid-template-columns:130px 1fr 230px;
+    gap:40px;
+    padding:34px 0;
+    border-top:1px solid var(--rule);
+    align-items:start;
+    opacity:0;transform:translateY(24px);
+    transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1),background .3s;
+  }
+  .rank-item:last-of-type{border-bottom:1px solid var(--rule);}
+  .rank-item:hover{background:rgba(255,255,255,.45);}
+  .rank-num{
+    font-family:"Playfair Display",serif;
+    font-size:78px;font-weight:900;line-height:.9;
+    color:transparent;
+    -webkit-text-stroke:1.5px var(--ink-faint);
+    transition:all .35s;
+  }
+  .rank-item:hover .rank-num{
+    color:var(--vermilion);-webkit-text-stroke:1.5px var(--vermilion);
+  }
+  .rank-main .tags{
+    display:flex;gap:10px;margin-bottom:12px;align-items:center;flex-wrap:wrap;
+  }
+  .tag{
+    font-size:10.5px;letter-spacing:.2em;font-weight:700;
+    padding:3px 10px 2px;border:1px solid currentColor;border-radius:999px;
+    text-transform:uppercase;
+  }
+  .tag.model{color:var(--blue);}
+  .tag.mna{color:var(--gold);}
+  .tag.product{color:var(--vermilion);}
+  .tag.space{color:var(--teal);}
+  .tag.trend{color:var(--ink-soft);}
+  .rank-main h4{
+    font-family:"Noto Serif SC",serif;font-weight:700;font-size:24px;
+    line-height:1.45;margin-bottom:10px;letter-spacing:.01em;
+  }
+  .rank-main .summary{font-size:15px;color:var(--ink-soft);text-align:justify;}
+  .rank-side{padding-top:6px;}
+  .rank-side .heat-val{
+    font-family:"Playfair Display",serif;font-size:34px;font-weight:900;
+    line-height:1;margin-bottom:10px;
+  }
+  .rank-side .heat-val small{font-size:13px;color:var(--ink-faint);font-family:"Noto Sans SC",sans-serif;font-weight:400;letter-spacing:.1em;}
+  .rank-side .heat-bar{margin:0 0 14px;}
+  .rank-side .cmt{
+    font-size:12.5px;color:var(--ink-soft);line-height:1.8;
+    border-top:1px solid var(--rule);padding-top:12px;
+  }
+  .rank-side .cmt b{color:var(--vermilion-deep);font-weight:700;letter-spacing:.15em;font-size:11px;display:block;margin-bottom:4px;}
+
+  /* ============ 页脚 ============ */
+  footer{margin-top:70px;background:var(--ink);color:#cfc8ba;padding:52px 0 44px;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap;}
+  footer .f-title{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:24px;color:var(--paper);letter-spacing:.1em;
+  }
+  footer .f-title .en{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:16px;margin-left:10px;color:var(--vermilion);}
+  footer p{font-size:12px;letter-spacing:.08em;line-height:2;color:#a39b8a;}
+  footer .f-right{text-align:right;}
+
+  /* ============ 入场动画 ============ */
+  .fade-up{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s cubic-bezier(.16,1,.3,1);}
+  .loaded .fade-up{opacity:1;transform:none;}
+  .loaded .rank-item{opacity:1;transform:none;}
+  .d1{transition-delay:.05s}.d2{transition-delay:.18s}.d3{transition-delay:.32s}
+  .d4{transition-delay:.46s}.d5{transition-delay:.6s}.d6{transition-delay:.74s}.d7{transition-delay:.88s}
+
+  /* ============ 响应式 ============ */
+  @media (max-width:1020px){
+    .hero{grid-template-columns:1fr;}
+    .hero-side{border-left:none;padding-left:0;border-top:1px solid var(--rule);padding-top:32px;}
+    .rank-item{grid-template-columns:90px 1fr;gap:26px;}
+    .rank-side{grid-column:2;padding-top:20px;}
+    .rank-num{font-size:56px;}
+  }
+  @media (max-width:720px){
+    .wrap{padding:0 24px;}
+    .masthead{flex-direction:column;gap:18px;}
+    .masthead h1{font-size:42px;}
+    .masthead h1 .en{display:block;margin:10px 0 0;font-size:22px;}
+    .issue-info{text-align:left;}
+    .hero-main h2{font-size:36px;}
+    .stats-row{grid-template-columns:1fr;}
+    .stat{border-right:none;border-bottom:1px solid var(--rule);}
+    .rank-item{grid-template-columns:1fr;}
+    .rank-side{grid-column:1;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;opacity:1!important;transform:none!important;}
+    .heat-bar i{width:var(--w)!important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="topline fade-up d1">
+    <span>AI · 科技 · 前沿观察</span>
+    <span>Curated by QwenWork</span>
+    <span>Vol.009</span>
+  </div>
+  <div class="masthead fade-up d2">
+    <h1>前沿日报<span class="en">The Frontier Daily</span></h1>
+    <div class="issue-info">
+      <div class="date">2026 / 09 / 13</div>
+      <div>星期日 · 更新版</div>
+      <div>每日 08:00 自动更新</div>
+    </div>
+  </div>
+  <div class="double-rule"></div>
+</header>
+
+<!-- ============ 头条特写 ============ -->
+<section class="wrap hero">
+  <div class="hero-main">
+    <div class="kicker fade-up d2">头条 · THE LEAD · 行业转折点</div>
+    <h2 class="fade-up d3">Anthropic 掌门人呼吁<span class="en-name">「放缓」</span><br>马斯克、奥特曼罕见齐响应</h2>
+    <p class="hero-sub fade-up d3">三巨头同日发出减速信号,奥特曼更宣布 OpenAI 2026 年不上市——「竞赛」叙事出现了第一道正式裂缝。</p>
+
+    <figure class="hero-fig fade-up d4">
+      <img src="hero-web.jpg" alt="AI 减速共识头条插画:纸质肌理上,神经网络汇聚成一轮新星升起">
+      <figcaption><span>插画:踩下刹车的时刻</span><span>THE FRONTIER DAILY</span></figcaption>
+    </figure>
+
+    <div class="hero-body fade-up d4">
+      <p>9 月 13 日,Anthropic CEO 达里奥·阿莫代伊公开表示「必须放慢 AI 模型能力提升的步伐」,并直言在多起 AI 失控事件后,继续以当前节奏迭代前代旗舰级能力是不负责任的;马斯克与奥特曼罕见地同步响应,三方罕见地达成了「有必要放缓 AI 发展速度」的共识。同日,奥特曼明确表态:OpenAI 不会在 2026 年上市,若 AI 对人类生存构成威胁,「宁愿毁掉 IPO」。</p>
+      <p>这组信号的分量要用一周的背景来读:25 位菲尔兹奖得主的联名公开信、GPT-6 Astra「换考场」重测分数腰斩、智能体「串题」事件——安全与公信力的压力在本周集中引爆,头部实验室终于从「AGI 竞赛」的合唱中走出了一位说「慢一点」的人。值得注意的是,市场的第一反应是担忧「AI 交易」周一承压——共识与股价,此刻站在了跷跷板的两端。</p>
+    </div>
+
+    <div class="stats-row fade-up d5">
+      <div class="stat">
+        <div class="num">3 <em>家</em></div>
+        <div class="label">头部实验室同日减速表态<br>Anthropic · OpenAI · xAI</div>
+      </div>
+      <div class="stat">
+        <div class="num">2027</div>
+        <div class="label">OpenAI IPO 推迟至明年<br>「宁愿毁掉 IPO」</div>
+      </div>
+      <div class="stat">
+        <div class="num">1 <em>周</em></div>
+        <div class="label">压力引爆周期:数学界公开信<br>重测腰斩 · 智能体串题事件</div>
+      </div>
+    </div>
+
+    <div class="editor-note fade-up d5">
+      <div class="note-tag">编辑点评 · Why It Matters</div>
+      <p>呼吁减速的为什么是最先喊出 AI 风险、却也从模型涨价中获益最丰的 Anthropic——这个身份让宣言有了双关的解读空间。但抛开动机,<em>三巨头的共识本身改变了博弈结构</em>:当「慢下来」从安全派的单方呼吁变成头部玩家的共同立场,追赶者反而获得了罕见的窗口——DeepSeek、Meta 们的下一步,将决定这场「减速共识」是真拐点,还是又一次短暂的集体表演。</p>
+    </div>
+  </div>
+
+  <aside class="hero-side fade-up d4">
+    <div class="meta-block">
+      <h4>热度指数 · Buzz Index</h4>
+      <div class="big-heat">96</div>
+      <div class="heat-bar"><i data-w="96%"></i></div>
+      <div style="font-size:11px;letter-spacing:.14em;color:var(--ink-faint);">基于报道源数量与讨论度综合估算</div>
+    </div>
+    <div class="meta-block">
+      <h4>档案 · Fact Sheet</h4>
+      <ul class="meta-list">
+        <li><b>发起方</b><span>Anthropic CEO 阿莫代伊</span></li>
+        <li><b>响应方</b><span>马斯克 · 奥特曼</span></li>
+        <li><b>发布时间</b><span>9月13日</span></li>
+        <li><b>连带影响</b><span>OpenAI 2026 年不上市</span></li>
+      </ul>
+    </div>
+    <div class="meta-block">
+      <h4>来源 · Source</h4>
+      <ul class="meta-list">
+        <li><b>财联社</b></li>
+        <li><b>腾讯新闻</b></li>
+        <li><b>新浪科技</b></li>
+      </ul>
+      <a class="src-link" href="https://news.qq.com/rain/a/20260913A03J5O00" target="_blank" rel="noopener">阅读原文报道 ↗</a>
+    </div>
+  </aside>
+</section>
+
+<!-- ============ 热度榜 ============ -->
+<section class="wrap ranking">
+  <div class="section-head fade-up d4">
+    <h3>本期热度榜<span>The Ranking</span></h3>
+    <div class="hint">按重要性与热度排序 · 02 — 07</div>
+  </div>
+
+  <!-- 02 -->
+  <article class="rank-item">
+    <div class="rank-num">02</div>
+    <div class="rank-main">
+      <div class="tags"><span class="tag space">政策</span><span class="tag trend">算力基建</span></div>
+      <h4>全国算力「一张网」成型:中国算力大会宣布一体化格局,布局太空算力新赛道</h4>
+      <p class="summary">9 月 12 日,2026 中国算力大会披露:全国算力「一张网、一盘棋、一体化」发展格局基本形成,实现一体化统筹监测;大会同步宣布布局太空算力新赛道、推进算力普惠,国家超算互联网用户已突破 170 万,国常会最新部署进一步加码算力网建设。</p>
+    </div>
+    <div class="rank-side">
+      <div class="heat-val">92 <small>/ 100</small></div>
+      <div class="heat-bar"><i data-w="92%"></i></div>
+      <div class="cmt"><b>编辑点评</b>「一张网」的本质是把算力从企业资产变成国家基础设施——像电网一样统一调度、按需取用。当美国靠巨头各自建集群、中国靠一体化组网,两种算力组织模式的优劣,可能会成为比芯片制程更值得观察的变量。</div>
+      <a class="src-link" href="https://news.qq.com/rain/a/20260912A0BFR600" target="_blank" rel="noopener">来源:腾讯新闻 ↗</a>
+    </div>
+  </article>
+
+  <!-- 03 -->
+  <article class="rank-item">
+    <div class="rank-num">03</div>
+    <div class="rank-main">
+      <div class="tags"><span class="tag mna">IPO 变局</span><span class="tag trend">资本市场</span></div>
+      <h4>「AI 交易」周一承压?OpenAI 推迟上市与减速共识引发市场担忧</h4>
+      <p class="summary">三巨头「放缓」共识与 OpenAI 推迟 IPO 的消息引发投资者热议:社区担忧「AI 交易」周一遭暴击;与此同时 Anthropic 未放缓自己的 IPO 进程,计划 10 月中旬启动首次公开募股推介——「减速」共识与「融资」行动在同一天出现了微妙的分裂。</p>
+    </div>
+    <div class="rank-side">
+      <div class="heat-val">88 <small>/ 100</small></div>
+      <div class="heat-bar"><i data-w="88%"></i></div>
+      <div class="cmt"><b>编辑点评</b>最耐人寻味的细节:呼吁减速的 Anthropic 并未放缓自己的 IPO。减速共识若只约束能力迭代而不约束资本扩张,「安全」与「估值」就仍是两本账。周一的市场开盘,将是检验这纸共识成色的第一道压力测试。</div>
+      <a class="src-link" href="https://news.qq.com/rain/a/20260913A05BPI00" target="_blank" rel="noopener">来源:腾讯新闻 ↗</a>
+    </div>
+  </article>
+
+  <!-- 04 -->
+  <article class="rank-item">
+    <div class="rank-num">04</div>
+    <div class="rank-main">
+      <div class="tags"><span class="tag model">世界模型</span><span class="tag product">具身智能</span></div>
+      <h4>生数科技发布 Motus 2:机器人灵巧操作开始「自进化」,具身智能迈入 RSI 元年</h4>
+      <p class="summary">生数科技(朱军团队)在外滩大会发布面向机器人灵巧操作的自进化通用世界模型 Motus 2:机器人首次实现「复盘 + 自改」闭环——执行失败后自主分析、修正策略再尝试,无需人工重训,被视为具身智能领域 RSI(递归自我改进)的标志性突破。</p>
+    </div>
+    <div class="rank-side">
+      <div class="heat-val">85 <small>/ 100</small></div>
+      <div class="heat-bar"><i data-w="85%"></i></div>
+      <div class="cmt"><b>编辑点评</b>「自进化」三个字放在减速共识的头条旁边,构成今天最微妙的一组对照——一方在喊慢,另一方已经让机器人学会了自己改自己。物理世界的 RSI 比聊天模型的自改更难,但一旦跑通,「训练成本」这个概念将被改写。</div>
+      <a class="src-link" href="https://www.sohu.com/a/1075210071_473283" target="_blank" rel="noopener">来源:搜狐科技 ↗</a>
+    </div>
+  </article>
+
+  <!-- 05 -->
+  <article class="rank-item">
+    <div class="rank-num">05</div>
+    <div class="rank-main">
+      <div class="tags"><span class="tag trend">行业思潮</span><span class="tag model">世界模型</span></div>
+      <h4>外滩大会收官:「世界模型元年」之辩——Physical AI 的边界、数据与商业化</h4>
+      <p class="summary">2026 外滩大会收官,「世界模型是 AI 走向物理世界的新大陆」成为压轴议题:京东 JoyAI、生数 Motus 2 同台,边界、数据与商业化路径的争论集中展开;同期普林斯顿学者泼冷水提醒「大模型尚未在基础学科做出真正的科学发现」——热潮与冷静同场。</p>
+    </div>
+    <div class="rank-side">
+      <div class="heat-val">80 <small>/ 100</small></div>
+      <div class="heat-bar"><i data-w="80%"></i></div>
+      <div class="cmt"><b>编辑点评</b>一周之内,「世界模型」从技术名词升格为行业主叙事——但元年之辩的真正分歧不在技术,而在「谁付账」:演示视频人人会放,商业化路径却没有一家敢画时间表。学术界的冷水提醒恰好补齐了拼图:热闹之外,基础科学的 AI 产出仍是空白。</div>
+      <a class="src-link" href="https://news.qq.com/rain/a/20260911A0C0RG00" target="_blank" rel="noopener">来源:腾讯新闻 ↗</a>
+    </div>
+  </article>
+
+  <!-- 06 -->
+  <article class="rank-item">
+    <div class="rank-num">06</div>
+    <div class="rank-main">
+      <div class="tags"><span class="tag product">具身智能</span><span class="tag trend">场景落地</span></div>
+      <h4>无人邮局机器人落地服贸会:±0.03mm 定位,打通「下单—投递」全闭环</h4>
+      <p class="summary">北京石景山企业展出双臂人形邮政终端机器人:定位精度 ±0.03mm,打通「下单—抓取—盖章—投递」全流程闭环,在服贸会现场落地演示——具身智能从展演舞台走进政务服务场景,政企应用成为具身智能落地的先行路径。</p>
+    </div>
+    <div class="rank-side">
+      <div class="heat-val">75 <small>/ 100</small></div>
+      <div class="heat-bar"><i data-w="75%"></i></div>
+      <div class="cmt"><b>编辑点评</b>比起会翻跟头的明星机器人,「邮局盖章」这种无聊到极致的场景反而是好消息——精度、闭环、真实付费方,具身智能商业化三要素它都占了。产业的成熟,往往从最不性感的场景开始。</div>
+      <a class="src-link" href="https://www.toutiao.com/w/1876169478188108/" target="_blank" rel="noopener">来源:今日头条科技快讯 ↗</a>
+    </div>
+  </article>
+
+  <!-- 07 -->
+  <article class="rank-item">
+    <div class="rank-num">07</div>
+    <div class="rank-main">
+      <div class="tags"><span class="tag mna">芯片</span><span class="tag space">端侧 AI</span></div>
+      <h4>晶晨发布新一代 6nm AI 芯片:端侧推理军备赛延伸至电视与家电</h4>
+      <p class="summary">晶晨股份发布新一代 6nm 低功耗 AI 芯片,面向智能电视与智能家居设备的高性能端侧推理;叠加 AMD 锐龙 AI Max PRO 400 支持 3000 亿参数模型本地运行,端侧大模型的硬件地基正在从手机、PC 向全屋智能扩展。</p>
+    </div>
+    <div class="rank-side">
+      <div class="heat-val">72 <small>/ 100</small></div>
+      <div class="heat-bar"><i data-w="72%"></i></div>
+      <div class="cmt"><b>编辑点评</b>当「3000 亿参数本地跑」成为 PC 宣传语、6nm AI 芯片装进电视,端侧推理的门槛正在消失。真正的信号是:端侧不再是云端的补充,而是智能分发的新战场——苹果端侧 AI 战略(本周头条)的对手们,已在家电与客厅集合。</div>
+      <a class="src-link" href="https://www.163.com/dy/article/L6LDGGI50552IBJ1.html" target="_blank" rel="noopener">来源:网易科技 ↗</a>
+    </div>
+  </article>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="f-title">前沿日报<span class="en">The Frontier Daily</span></div>
+      <p>选题范围:AI 为主 · 泛科技点缀 | 热度指数基于多源报道与讨论度综合估算<br>本页内容由 QwenWork 于每日 08:00 自动检索、编排并更新</p>
+    </div>
+    <div class="f-right">
+      <p>2026 年 9 月 13 日 · 第 009 期<br>All news items link to their original sources.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('load',()=>{
+    document.body.classList.add('loaded');
+    document.querySelectorAll('.heat-bar i').forEach(el=>{
+      el.style.width=el.dataset.w;
+    });
+  });
+</script>
+</body>
+</html>
