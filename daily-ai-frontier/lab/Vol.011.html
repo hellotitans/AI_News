@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>费曼实验室 · Vol.011 — 计算成像:当镜头让位给算法 | 前沿日报</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f7f3ea; --paper-deep:#efe9db; --paper-lab:#eef0ea;
+    --ink:#1a1815; --ink-soft:#4a453d; --ink-faint:#8a8375;
+    --teal:#16665a; --teal-deep:#0d4a41;
+    --vermilion:#c0392b;
+    --rule:#d8d0bf; --rule-dark:#1a1815;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+    line-height:1.8; -webkit-font-smoothing:antialiased;
+  }
+  body::after{
+    content:''; position:fixed; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.035; pointer-events:none; z-index:9999;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 40px;}
+
+  header{padding-top:44px;}
+  .topline{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-faint); border-bottom:1px solid var(--rule); padding-bottom:10px;
+  }
+  .masthead{display:flex;align-items:baseline;justify-content:space-between;padding:32px 0 24px;flex-wrap:wrap;gap:16px;}
+  .masthead h1{
+    font-family:"Noto Serif SC",serif; font-weight:900; font-size:46px; letter-spacing:.06em; line-height:1;
+  }
+  .masthead h1 .en{
+    font-family:"Playfair Display",serif; font-weight:900; font-style:italic;
+    color:var(--teal); font-size:24px; letter-spacing:.02em; margin-left:14px;
+  }
+  .lab-meta{text-align:right;font-size:12px;letter-spacing:.14em;color:var(--ink-soft);line-height:2;}
+  .lab-meta .vol{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--ink);}
+  .back-link{
+    font-size:12.5px;letter-spacing:.1em;color:var(--teal);
+    border-bottom:1px solid var(--teal);padding-bottom:2px;transition:all .25s;
+  }
+  .back-link:hover{color:var(--vermilion);border-color:var(--vermilion);}
+  .double-rule{border-top:3px solid var(--rule-dark);border-bottom:1px solid var(--rule-dark);height:6px;}
+
+  .topic-head{padding:48px 0 12px;}
+  .topic-head .kicker{
+    display:inline-flex;align-items:center;gap:12px;
+    font-size:12px;letter-spacing:.3em;color:var(--teal);font-weight:700;margin-bottom:22px;
+  }
+  .topic-head .kicker::before{content:'';width:42px;height:1px;background:var(--teal);}
+  .topic-head h2{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:46px;line-height:1.25;
+  }
+  .topic-head h2 .en-name{font-family:"Playfair Display",serif;font-style:italic;color:var(--teal);}
+  .topic-head .standfirst{
+    font-family:"Noto Serif SC",serif;font-size:18px;color:var(--ink-soft);margin-top:16px;line-height:1.9;
+  }
+
+  /* 概念卡 */
+  .concept-card{
+    background:var(--paper-lab);border:1px solid var(--rule);border-top:4px solid var(--teal);
+    padding:30px 34px;margin:30px 0;
+  }
+  .concept-card .cc-label{font-size:11px;letter-spacing:.32em;font-weight:700;color:var(--teal);margin-bottom:12px;}
+  .concept-card .cc-def{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:600;line-height:1.9;}
+  .concept-card .cc-analogy{
+    margin-top:16px;padding-top:16px;border-top:1px dashed var(--rule);
+    font-size:14.5px;color:var(--ink-soft);
+  }
+  .concept-card .cc-analogy b{color:var(--teal-deep);letter-spacing:.1em;font-size:12px;display:block;margin-bottom:4px;}
+
+  /* 原理拆解 */
+  .section-h{
+    display:flex;align-items:baseline;gap:14px;margin:52px 0 8px;
+  }
+  .section-h .no{
+    font-family:"Playfair Display",serif;font-style:italic;font-size:26px;font-weight:700;color:var(--teal);
+  }
+  .section-h h3{font-family:"Noto Serif SC",serif;font-weight:900;font-size:26px;letter-spacing:.05em;}
+  .section-h .en{font-family:"Playfair Display",serif;font-style:italic;font-size:15px;color:var(--ink-faint);margin-left:auto;}
+  .section-intro{font-size:13px;color:var(--ink-faint);letter-spacing:.05em;margin-bottom:22px;}
+
+  .layer{
+    display:grid;grid-template-columns:120px 1fr;gap:28px;
+    padding:26px 0;border-top:1px solid var(--rule);align-items:start;
+  }
+  .layer:last-of-type{border-bottom:1px solid var(--rule);}
+  .layer .lv{
+    font-family:"Playfair Display",serif;font-size:38px;font-weight:900;line-height:1;
+    color:transparent;-webkit-text-stroke:1.2px var(--teal);
+  }
+  .layer h4{font-family:"Noto Serif SC",serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+  .layer p{font-size:15px;color:var(--ink-soft);text-align:justify;}
+  .layer p b{color:var(--ink);font-weight:700;}
+
+  /* 新闻锚点 */
+  .anchors{list-style:none;margin-top:26px;}
+  .anchors li{
+    display:grid;grid-template-columns:30px 1fr;gap:12px;
+    padding:14px 0;border-bottom:1px dotted var(--rule);font-size:14px;color:var(--ink-soft);
+  }
+  .anchors li::before{content:'§';color:var(--teal);font-family:"Playfair Display",serif;}
+  .anchors li .a-body{line-height:1.9;}
+  .anchors li b{color:var(--ink);}
+
+  /* 常见误解 */
+  .myth{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border:1px solid var(--rule);margin-bottom:-1px;
+  }
+  .myth .wrong{padding:20px 24px;background:rgba(192,57,43,.05);}
+  .myth .right{padding:20px 24px;background:rgba(22,102,90,.06);border-left:1px solid var(--rule);}
+  .myth .tagline{font-size:10.5px;letter-spacing:.25em;font-weight:700;margin-bottom:8px;}
+  .myth .wrong .tagline{color:var(--vermilion);}
+  .myth .right .tagline{color:var(--teal);}
+  .myth p{font-size:13.5px;line-height:1.9;}
+  .myth .wrong p{color:var(--ink-soft);}
+  .myth .right p{color:var(--ink-soft);}
+  .myth .right p b{color:var(--teal-deep);}
+
+  /* 费曼时刻 */
+  .feynman{
+    margin-top:56px;background:var(--ink);color:#e8e2d4;padding:48px 0 44px;
+  }
+  .feynman .wrap{max-width:900px;}
+  .feynman .fy-kicker{font-size:11px;letter-spacing:.34em;color:#5fb3a5;font-weight:700;margin-bottom:10px;}
+  .feynman h3{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:32px;color:#f4efe3;letter-spacing:.04em;
+  }
+  .feynman h3 span{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:18px;color:#5fb3a5;margin-left:12px;}
+  .feynman .fy-intro{font-size:13.5px;color:#a89f8c;margin:10px 0 26px;line-height:2;}
+  .fy-q{
+    display:grid;grid-template-columns:52px 1fr;gap:18px;padding:16px 0;
+    border-top:1px solid rgba(232,226,212,.18);align-items:baseline;
+  }
+  .fy-q .qn{font-family:"Playfair Display",serif;font-style:italic;font-size:24px;color:#5fb3a5;}
+  .fy-q p{font-family:"Noto Serif SC",serif;font-size:16.5px;font-weight:600;color:#e8e2d4;line-height:1.8;}
+  .fy-q p small{display:block;font-family:"Noto Sans SC",sans-serif;font-weight:400;font-size:12px;color:#8d8571;margin-top:4px;letter-spacing:.05em;}
+  .fy-input-area{margin-top:30px;}
+  .fy-input-area label{font-size:12px;letter-spacing:.2em;color:#5fb3a5;font-weight:700;display:block;margin-bottom:10px;}
+  #feynman-note{
+    width:100%;min-height:180px;resize:vertical;
+    background:rgba(247,243,234,.06);border:1px solid rgba(232,226,212,.25);
+    color:#f4efe3;font-family:"Noto Sans SC",sans-serif;font-size:14.5px;line-height:2;
+    padding:18px 20px;outline:none;transition:border-color .3s;
+  }
+  #feynman-note:focus{border-color:#5fb3a5;}
+  #feynman-note::placeholder{color:#6e6754;}
+  .fy-actions{display:flex;gap:14px;margin-top:16px;flex-wrap:wrap;}
+  .fy-btn{
+    font-family:"Noto Sans SC",sans-serif;font-size:13px;letter-spacing:.14em;font-weight:500;
+    padding:10px 22px;cursor:pointer;transition:all .25s;border:1px solid #5fb3a5;background:transparent;color:#5fb3a5;
+  }
+  .fy-btn:hover{background:#5fb3a5;color:#12211d;}
+  .fy-btn.primary{background:#5fb3a5;color:#12211d;font-weight:700;}
+  .fy-btn.primary:hover{background:#7ccbbd;}
+  .fy-btn.voice{border-color:#c8a95f;color:#c8a95f;}
+  .fy-btn.voice:hover{background:#c8a95f;color:#1a1608;}
+  .fy-btn.review{border-color:#8a9bc4;color:#8a9bc4;}
+  .fy-btn.review:hover{background:#8a9bc4;color:#101522;}
+  .fy-btn.voice.listening{
+    background:var(--vermilion);border-color:var(--vermilion);color:#fff;
+    animation:voice-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes voice-pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.55);}
+    50%{box-shadow:0 0 0 10px rgba(192,57,43,0);}
+  }
+  .fy-status{font-size:12px;color:#8d8571;letter-spacing:.08em;align-self:center;}
+  .fy-ref{margin-top:30px;}
+  .fy-ref summary{
+    cursor:pointer;font-size:13px;letter-spacing:.16em;color:#c8a95f;font-weight:700;
+    list-style:none;padding:10px 0;border-top:1px solid rgba(232,226,212,.18);
+  }
+  .fy-ref summary::-webkit-details-marker{display:none;}
+  .fy-ref summary::before{content:'▸ ';}
+  .fy-ref[open] summary::before{content:'▾ ';}
+  .fy-ref .ref-body{
+    background:rgba(200,169,95,.07);border:1px dashed rgba(200,169,95,.4);
+    padding:20px 24px;margin-top:10px;font-size:13.5px;line-height:2.1;color:#d8d0bf;
+  }
+  .fy-ref .ref-body li{margin-bottom:10px;margin-left:20px;}
+  .fy-ref .ref-body b{color:#e9d9ae;}
+
+  /* 学习档案 */
+  .archive-sec{margin-top:56px;padding-bottom:20px;}
+  .archive-sec .section-h{margin-top:0;}
+  #note-list{list-style:none;}
+  #note-list li{
+    display:grid;grid-template-columns:130px 1fr auto;gap:20px;align-items:baseline;
+    padding:16px 0;border-bottom:1px dotted var(--rule);font-size:13.5px;
+  }
+  #note-list .n-vol{font-family:"Playfair Display",serif;font-weight:700;color:var(--teal);}
+  #note-list .n-date{font-size:11px;color:var(--ink-faint);letter-spacing:.1em;}
+  #note-list .n-text{color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  #note-list .n-review{
+    margin-top:8px;padding:10px 14px;
+    background:rgba(138,155,196,.1);border-left:2px solid #8a9bc4;
+    font-size:12px;line-height:1.9;color:var(--ink-faint);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  #note-list .n-review b{color:#5a6b99;letter-spacing:.12em;font-size:11px;margin-right:6px;}
+  #note-list .n-export{font-size:11.5px;letter-spacing:.1em;color:var(--teal);border-bottom:1px dotted var(--teal);cursor:pointer;white-space:nowrap;}
+  .empty-hint{font-size:13px;color:var(--ink-faint);padding:18px 0;border-bottom:1px dotted var(--rule);}
+
+  footer{margin-top:50px;background:var(--ink);color:#cfc8ba;padding:38px 0 34px;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;}
+  footer .f-title{font-family:"Noto Serif SC",serif;font-weight:900;font-size:18px;color:var(--paper);letter-spacing:.1em;}
+  footer .f-title .en{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:13px;margin-left:10px;color:#5fb3a5;}
+  footer p{font-size:11.5px;letter-spacing:.08em;line-height:2;color:#a39b8a;}
+
+  @media (max-width:720px){
+    .wrap{padding:0 22px;}
+    .masthead h1{font-size:34px;}
+    .topic-head h2{font-size:32px;}
+    .layer{grid-template-columns:1fr;gap:10px;}
+    .layer .lv{font-size:30px;}
+    .myth{grid-template-columns:1fr;}
+    .myth .right{border-left:none;border-top:1px solid var(--rule);}
+    #note-list li{grid-template-columns:1fr;gap:6px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="topline">
+    <span>费曼实验室 · 每日一个前沿概念</span>
+    <span>Learn by Explaining</span>
+    <span>2026 / 09 / 15</span>
+  </div>
+  <div class="masthead">
+    <h1>费曼实验室<span class="en">The Feynman Lab</span></h1>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <div class="lab-meta"><span class="vol">Vol.011</span> · 星期二<br>本期概念:计算成像</div>
+      <a class="back-link" href="../">← 返回今日日报</a>
+    </div>
+  </div>
+  <div class="double-rule"></div>
+</header>
+
+<main class="wrap">
+
+  <div class="topic-head">
+    <div class="kicker">今日概念 · TODAY'S CONCEPT</div>
+    <h2>计算成像:当镜头<br><span class="en-name">让位给算法</span></h2>
+    <p class="standfirst">OpenAI 花 3 亿美元买下一家做「平板镜头」的公司。这背后藏着一个正在发生的转变:成像的质量,不再由玻璃决定,而由计算决定。</p>
+  </div>
+
+  <!-- 概念卡 -->
+  <div class="concept-card">
+    <div class="cc-label">概念卡 · IN ONE SENTENCE</div>
+    <p class="cc-def">计算成像(Computational Imaging)不再强求镜头「当场把像拍完美」,而是故意让光学系统采集一份<b>残缺、但信息完备</b>的原始数据,再交给算法反推出高质量图像——把原本由精密玻璃承担的一部分工作,永久地转移给了后端的计算。</p>
+    <div class="cc-analogy">
+      <b>一个类比</b>
+      传统相机像请一位书法大家当场写定:一笔落下去就是最终作品,写好写坏全看这支笔(镜头)的功力。计算成像则像先用速记符号潦草地记下一堆「信息都在、只是不好看」的草稿,事后再交给 AI 誊成任意你想要的字体——同一份草稿,可以重建成清晰版、放大版、甚至换一种景深。牺牲「当场定稿」,换来「事后任意重造」的自由。
+    </div>
+  </div>
+
+  <!-- 原理拆解 -->
+  <div class="section-h">
+    <span class="no">No.1</span>
+    <h3>原理拆解</h3>
+    <span class="en">How It Works</span>
+  </div>
+  <p class="section-intro">三层递进:计算成像怎么把「光学的活」分给算法;它与传统成像的根本区别;以及它的力量与危险为什么是同一件事。</p>
+
+  <div class="layer">
+    <div class="lv">01</div>
+    <div>
+      <h4>第一层:把「光学精度」换成「计算自由度」</h4>
+      <p>传统相机堆叠多片弯曲玻璃,是为了<b>在光到达传感器之前,就把像差、畸变、模糊全部校正干净</b>——成像质量在快门的瞬间就被物理定死。计算成像反着来:它用一片极薄的光学元件(甚至故意加一层「编码掩模」把图像打乱),先采集一份<b>看着残缺、但关键信息都还在</b>的原始信号,再把「还原成好图」这件事交给算法求解。省下的,是那一堆昂贵、厚重、难调校的玻璃。</p>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="lv">02</div>
+    <div>
+      <h4>第二层:与传统相机的根本区别</h4>
+      <p>传统成像是「所见即所得」——拍完就定死,糊了就是糊了。计算成像把成像变成一个<b>「可反问题」(inverse problem)</b>:传感器拿到的是「证据」,最终图像是「根据证据重建出的最优解」。这意味着同一份原始数据,可以被重建成不同焦点、不同景深、不同分辨率的多个版本。一句话:传统相机交付<b>一张照片</b>,计算成像交付<b>一个可以反复求解的光场</b>——硬件因此能做得更薄、更轻、更便宜,还能专为机器的「看」而非人眼的「看」来优化。</p>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="lv">03</div>
+    <div>
+      <h4>第三层:力量与危险为何同源</h4>
+      <p>它的一切好处——更薄、可编程、能为模型定制——都来自同一个动作:<b>把「真实记录」降级为「算法重建」</b>。而这恰恰也是风险的源头:当一张图不再是「光子的忠实账本」,而是「模型算出来的最可能的样子」,摄影作为<b>证据</b>的地位就开始松动。同一项技术,能让自动驾驶在暴雨夜里「算」出被雨幕遮住的路标,也能让伪造的图像从像素层面就无从辨真伪。极致的重建能力与极致的可伪造性,来自同一个源头。</p>
+    </div>
+  </div>
+
+  <!-- 为什么重要 -->
+  <div class="section-h">
+    <span class="no">No.2</span>
+    <h3>为什么重要,锚在今天的新闻</h3>
+    <span class="en">Why It Matters</span>
+  </div>
+  <p class="section-intro">计算成像不是抽象概念,今天日报的头条与两条延伸线索都绕着它转:</p>
+  <ul class="anchors">
+    <li><span class="a-body"><b>头条 · OpenAI 逾 3 亿美元收购 Glass Imaging</b> —— 前苹果团队、平板计算成像、变焦方案曾用于荣耀手机:模型公司把「感知前端」变成自持资产的关键落子。</span></li>
+    <li><span class="a-body"><b>承接 Vol.010 · 自研推理芯片 Jalapeño</b> —— 更薄更可控的成像,意味着更低延迟、更省算力的视觉输入;感知硬件与推理芯片是同一条链的上下游。</span></li>
+    <li><span class="a-body"><b>承接 Vol.009 · 官宣自研人形机器人</b> —— 机器人要「看懂」物理世界,靠的正是为机器视觉优化的成像前端,而非给人眼看的漂亮照片。</span></li>
+  </ul>
+
+  <!-- 常见误解 -->
+  <div class="section-h">
+    <span class="no">No.3</span>
+    <h3>常见误解</h3>
+    <span class="en">Common Myths</span>
+  </div>
+  <p class="section-intro">三个最容易搞错的地方——聊天的 credibility 就从这里来。</p>
+
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解一</div>
+      <p>「计算成像不就是手机的美颜和夜景算法吗?」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>美颜是对<b>已经拍好的像</b>做后期;计算成像在<b>光还没变成图像之前</b>就介入——它改变的是「采集什么信息」,而不是「美化已有信息」。前者是化妆,后者是重新设计眼睛。</p>
+    </div>
+  </div>
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解二</div>
+      <p>「算法这么强,以后镜头随便做做就行,光学不重要了。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>算法再强,也<b>救不回传感器根本没采到的信息</b>。计算成像能成立,恰恰靠的是「残缺但信息完备」的光学设计——它对光学的要求不是更低,而是<b>更难、更精妙</b>:要故意设计出让算法能反解的编码方式。</p>
+    </div>
+  </div>
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解三</div>
+      <p>「重建出来的高清大图,就是真实世界的样子。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>它是「最可能的重建」,不是「真实的记录」。这既是超能力(能从极弱信号里看清目标),也是新风险(<b>图像作为证据的地位被削弱</b>)——记住这条,你就理解了为什么它会同时出现在自动驾驶和深度伪造的新闻里。</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- 费曼时刻 -->
+<section class="feynman">
+  <div class="wrap">
+    <div class="fy-kicker">费曼时刻 · THE FEYNMAN MOMENT</div>
+    <h3>现在,轮到你讲<span>If you can't explain it simply...</span></h3>
+    <p class="fy-intro">合上上面的内容,用自己的话回答下面三问。写得糙没关系——费曼法的价值恰恰在你卡壳的地方。写完先<b style="color:#c8a95f;">对照参考要点自查</b>,再<b style="color:#c8a95f;">「提交点评」获得导师即时反馈</b>:哪里讲对了、哪里是盲区、哪里值得深挖。笔记只存在你的浏览器里,可随时导出 Markdown 留档。</p>
+
+    <div class="fy-q">
+      <div class="qn">Q1</div>
+      <p>不许用「算法」「修图」这两个词,说清计算成像和传统相机的根本差别在哪?<small>提示:一个「当场定死」,一个「先记草稿、事后誊写」——谁更自由?</small></p>
+    </div>
+    <div class="fy-q">
+      <div class="qn">Q2</div>
+      <p>一家做模型的 OpenAI,为什么要花钱去买一家做镜头的公司?<small>提示:把「感知即数据、数据即护城河」这三段连成一句话</small></p>
+    </div>
+    <div class="fy-q">
+      <div class="qn">Q3</div>
+      <p>计算成像让图像更强,但它悄悄动摇了哪一个我们以前深信不疑的东西?<small>提示:想想「证据」这个词,以及一张照片在法庭上意味着什么</small></p>
+    </div>
+
+    <div class="fy-input-area">
+      <label for="feynman-note">我的复述 · MY EXPLANATION</label>
+      <textarea id="feynman-note" placeholder="Q1:……&#10;Q2:……&#10;Q3:……&#10;&#10;可以打字,也可以用下面的「按住说话」语音输入,写完后展开参考要点对照。"></textarea>
+      <div class="fy-actions">
+        <button class="fy-btn primary" id="btn-submit">提交点评</button>
+        <button class="fy-btn voice" id="btn-voice" title="按住说话,松开结束(Chrome/Edge)">🎤 按住说话</button>
+        <button class="fy-btn review" id="btn-review" title="粘贴导师从对话中回写的点评包,与本篇复述配对存档">📥 粘贴导师点评</button>
+        <button class="fy-btn" id="btn-save">保存笔记</button>
+        <button class="fy-btn" id="btn-export">导出 Markdown</button>
+        <button class="fy-btn" id="btn-clear">清空重写</button>
+        <span class="fy-status" id="fy-status"></span>
+      </div>
+    </div>
+
+    <details class="fy-ref">
+      <summary>写完了?展开参考要点,逐条自查(先写后看,顺序不能反)</summary>
+      <div class="ref-body">
+        <ol>
+          <li><b>一句话版本:</b>故意让镜头采集「残缺但信息完备」的原始数据,再用算法重建高质量图像——把成像从「光学的即时定稿」变成「计算的可反问题」。</li>
+          <li><b>OpenAI 动机:</b>多模态模型的天花板越来越取决于「看到什么」,而非「会说多少」;平板计算成像更薄、可编程、为机器视觉优化——自持镜头=掌控感知入口,外包镜头=把命门交给供应商。</li>
+          <li><b>新风险:</b>重建≠真实记录。当图像是「算出来的最可能」,摄影的证据地位动摇;深度伪造从「伪造内容」下沉到「伪造像素」,连「眼见为实」这条底线都要重新谈判。</li>
+          <li><b>加分项(聊资):</b>「可反问题」「光场」「计算显微镜」这几个词能让你的解释显得专业;判断一个成像系统先不先进,别看「拍出来多好看」,要看它「为后端模型留了多少可重建的信息」。</li>
+        </ol>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- 学习档案 -->
+<section class="wrap archive-sec">
+  <div class="section-h">
+    <span class="no">No.4</span>
+    <h3>我的学习档案</h3>
+    <span class="en">My Notes</span>
+  </div>
+  <p class="section-intro">以下复述记录保存在本浏览器中,换设备或清缓存会丢失——重要内容请记得导出,或直接贴到会话里和我讨论。</p>
+  <ul id="note-list"></ul>
+  <p class="empty-hint" id="empty-hint" style="display:none;">还没有任何笔记。完成上方复述并保存后,这里会留下你的第一笔。</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="f-title">费曼实验室<span class="en">The Feynman Lab</span></div>
+      <p>前沿日报 · 每日一个概念 | 笔记与导出均在本地浏览器完成</p>
+    </div>
+    <div>
+      <p>Vol.011 · 2026 年 9 月 15 日<br><a href="../" style="color:#cfc8ba;border-bottom:1px solid #a39b8a;">返回今日日报 →</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var VOL='Vol.011', DATE='2026-09-15', TOPIC='计算成像:当镜头让位给算法';
+  var KEY='fd-note-'+VOL;
+  var note=document.getElementById('feynman-note');
+  var status=document.getElementById('fy-status');
+
+  function setStatus(msg,ms){
+    status.textContent=msg;
+    if(ms){setTimeout(function(){status.textContent='';},ms);}
+  }
+  function readNote(){
+    try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null;}catch(e){return null;}
+  }
+  function writeNote(text){
+    try{
+      var prev=readNote()||{};
+      localStorage.setItem(KEY,JSON.stringify({
+        text:text,
+        review:prev.review||'',
+        reviewAt:prev.reviewAt||'',
+        savedAt:new Date().toISOString()
+      }));
+      return true;
+    }catch(e){return false;}
+  }
+  function writeReview(review){
+    try{
+      var prev=readNote()||{};
+      if(!prev.text){return 'no-note';}
+      localStorage.setItem(KEY,JSON.stringify({
+        text:prev.text,
+        review:review,
+        reviewAt:new Date().toISOString(),
+        savedAt:prev.savedAt||new Date().toISOString()
+      }));
+      return true;
+    }catch(e){return false;}
+  }
+  // 回填已有笔记
+  var existing=readNote();
+  if(existing&&existing.text){note.value=existing.text;setStatus('已载入你 '+existing.savedAt.slice(0,10)+' 保存的笔记');}
+
+  document.getElementById('btn-save').addEventListener('click',function(){
+    if(!note.value.trim()){setStatus('先写点什么再保存');return;}
+    setStatus(writeNote(note.value)?'已保存':'保存失败(浏览器存储不可用)',3000);
+    renderArchive();
+  });
+  document.getElementById('btn-clear').addEventListener('click',function(){
+    if(note.value&&!confirm('清空输入框内容?(已保存的笔记不受影响)'))return;
+    note.value='';setStatus('');
+  });
+  // 提交点评:复制到剪贴板,回到对话粘贴即获即时点评
+  document.getElementById('btn-submit').addEventListener('click',function(){
+    var text=note.value.trim();
+    if(!text){setStatus('先写点什么再提交');return;}
+    var payload='【费曼时刻 · '+VOL+' · '+TOPIC+'】\n请作为费曼导师点评我的复述:对照概念要点,指出我理解到位的地方、盲区或偏差,以及值得深挖的延伸点。\n\n'+text;
+    var done=function(){setStatus('已复制!回到 QwenWork 对话粘贴发送,即可获得即时点评',8000);};
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=payload;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done();}
+      catch(e){setStatus('复制失败,请全选文本框内容手动复制');}
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(payload).then(done,fallback);
+    }else{fallback();}
+  });
+
+  // ============ 粘贴导师点评:从剪贴板/手动粘贴,与复述配对存档 ============
+  document.getElementById('btn-review').addEventListener('click',function(){
+    var n=readNote();
+    if(!n||!n.text){setStatus('请先保存复述笔记,再粘贴点评(两者需配对)');return;}
+    var doSave=function(payload){
+      // 校验点评包格式:导师以「导师点评包」标记回写
+      var ok=false,content='';
+      if(payload){
+        var m=payload.match(/【导师点评包[\s\S]*】\n([\s\S]*)/);
+        if(m){content=m[1].trim();ok=true;}
+        else if(payload.indexOf('费曼时刻')===-1&&payload.length>40){content=payload.trim();ok=true;}
+      }
+      if(!ok){
+        // 格式不符:弹出粘贴框手动输入
+        var raw=prompt('剪贴板中没有检测到点评内容。\n请粘贴导师点评全文(可从对话中复制):');
+        if(!raw||!raw.trim())return;
+        content=raw.trim();
+      }
+      var r=writeReview(content);
+      if(r==='no-note'){setStatus('请先保存复述笔记,再粘贴点评');return;}
+      setStatus(r?'✓ 点评已与本篇复述配对存档,见「我的学习档案」':'保存失败(浏览器存储不可用)',6000);
+      renderArchive();
+    };
+    if(navigator.clipboard&&navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(t){doSave(t);},function(){doSave('');});
+    }else{doSave('');}
+  });
+
+  // ============ 语音复述(Web Speech API) ============
+  var vbtn=document.getElementById('btn-voice');
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var recog=null,listening=false;
+  if(!SR){
+    vbtn.disabled=true;
+    vbtn.title='当前浏览器不支持语音识别,请使用 Chrome 或 Edge';
+    vbtn.style.opacity=.45;vbtn.style.cursor='not-allowed';
+  }else{
+    recog=new SR();
+    recog.lang='zh-CN';
+    recog.continuous=true;      // 长按期间持续识别
+    recog.interimResults=true;  // 实时显示中间结果
+    var finalBuf='';            // 本轮已确认文字
+    var interim='';             // 本轮未确认文字
+    var baseText='';            // 按下时文本框已有内容
+
+    recog.onresult=function(e){
+      interim='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        var r=e.results[i];
+        if(r.isFinal){finalBuf+=r[0].transcript;}
+        else{interim+=r[0].transcript;}
+      }
+      note.value=baseText+(baseText?'\n':'')+finalBuf+interim;
+    };
+    recog.onerror=function(e){
+      stopListen();
+      if(e.error==='not-allowed'){
+        setStatus('麦克风权限被拒绝,请在浏览器地址栏允许麦克风后重试',6000);
+      }else if(e.error!=='aborted'){
+        setStatus('语音识别出错:'+e.error,5000);
+      }
+    };
+    recog.onend=function(){
+      // 异常结束(如超时自动停):若仍在按住,重启;否则收尾
+      if(listening){try{recog.start();}catch(e){}}
+      else{finishListen();}
+    };
+
+    function startListen(){
+      if(listening)return;
+      listening=true;
+      finalBuf='';interim='';baseText=note.value;
+      try{
+        recog.start();
+        vbtn.classList.add('listening');
+        vbtn.innerHTML='● 录音中…松开结束';
+        setStatus('正在聆听,请开始复述');
+      }catch(e){
+        listening=false;
+        setStatus('无法启动语音识别,请重试',4000);
+      }
+    }
+    function stopListen(){
+      if(!listening)return;
+      listening=false;
+      try{recog.stop();}catch(e){finishListen();}
+    }
+    function finishListen(){
+      vbtn.classList.remove('listening');
+      vbtn.innerHTML='🎤 按住说话';
+      if(finalBuf){
+        note.value=baseText+(baseText?'\n':'')+finalBuf.trim();
+        setStatus('语音已转写并追加(可直接编辑修正),记得提交点评',6000);
+      }else{
+        note.value=baseText;
+        setStatus('没有识别到内容,再试一次?');
+      }
+    }
+    // 按住说话:鼠标 + 触摸 双支持
+    vbtn.addEventListener('mousedown',startListen);
+    vbtn.addEventListener('touchstart',function(e){e.preventDefault();startListen();},{passive:false});
+    window.addEventListener('mouseup',stopListen);
+    vbtn.addEventListener('touchend',function(e){e.preventDefault();stopListen();},{passive:false});
+    // 防止按住时拖出按钮导致录音不停
+    vbtn.addEventListener('mouseleave',function(){if(listening)stopListen();});
+  }
+  function exportOne(text,name){
+    var blob=new Blob([text],{type:'text/markdown;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+  }
+  document.getElementById('btn-export').addEventListener('click',function(){
+    var text=note.value.trim();
+    if(!text){setStatus('没有可导出的内容');return;}
+    exportOne('# 费曼实验室 · '+VOL+' · '+TOPIC+'\n\n'+DATE+'\n\n'+text+'\n','费曼笔记-'+VOL+'.md');
+  });
+
+  function renderArchive(){
+    var list=document.getElementById('note-list');
+    var empty=document.getElementById('empty-hint');
+    list.innerHTML='';
+    var found=[];
+    try{
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        if(k&&k.indexOf('fd-note-')===0){
+          try{
+            var v=JSON.parse(localStorage.getItem(k));
+            found.push({vol:k.replace('fd-note-',''),text:v.text||'',review:v.review||'',date:(v.savedAt||'').slice(0,10)});
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+    found.sort(function(a,b){return a.vol<b.vol?1:-1;});
+    if(!found.length){empty.style.display='block';return;}
+    empty.style.display='none';
+    found.forEach(function(f){
+      var li=document.createElement('li');
+      var left=document.createElement('div');
+      var vol=document.createElement('div');vol.className='n-vol';vol.textContent=f.vol;
+      var dt=document.createElement('div');dt.className='n-date';dt.textContent=f.date;
+      left.appendChild(vol);left.appendChild(dt);
+      var mid=document.createElement('div');
+      var tx=document.createElement('div');tx.className='n-text';tx.textContent=f.text;
+      mid.appendChild(tx);
+      if(f.review){
+        var rv=document.createElement('div');rv.className='n-review';
+        rv.innerHTML='<b>导师点评</b> '+f.review.replace(/</g,'&lt;').substring(0,120)+(f.review.length>120?'…':'');
+        mid.appendChild(rv);
+      }
+      var ex=document.createElement('span');ex.className='n-export';ex.textContent='导出 ↧';
+      (function(ff){
+        ex.addEventListener('click',function(){
+          var out='# 费曼实验室 · '+ff.vol+'\n\n'+ff.date+'\n\n## 我的复述\n\n'+ff.text+'\n';
+          if(ff.review){out+='\n## 导师点评\n\n'+ff.review+'\n';}
+          exportOne(out,'费曼笔记-'+ff.vol+'.md');
+        });
+      })(f);
+      li.appendChild(left);li.appendChild(mid);li.appendChild(ex);
+      list.appendChild(li);
+    });
+  }
+  renderArchive();
+})();
+</script>
+</body>
+</html>
