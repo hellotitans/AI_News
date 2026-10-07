@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>费曼实验室 · Vol.015 — 通才模型:当AI学会一次看146种病 | 前沿日报</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f7f3ea; --paper-deep:#efe9db; --paper-lab:#eef0ea;
+    --ink:#1a1815; --ink-soft:#4a453d; --ink-faint:#8a8375;
+    --teal:#16665a; --teal-deep:#0d4a41;
+    --vermilion:#c0392b;
+    --rule:#d8d0bf; --rule-dark:#1a1815;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Noto Sans SC","Helvetica Neue",Arial,sans-serif;
+    line-height:1.8; -webkit-font-smoothing:antialiased;
+  }
+  body::after{
+    content:''; position:fixed; inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:.035; pointer-events:none; z-index:9999;
+  }
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:900px;margin:0 auto;padding:0 40px;}
+
+  header{padding-top:44px;}
+  .topline{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--ink-faint); border-bottom:1px solid var(--rule); padding-bottom:10px;
+  }
+  .masthead{display:flex;align-items:baseline;justify-content:space-between;padding:32px 0 24px;flex-wrap:wrap;gap:16px;}
+  .masthead h1{
+    font-family:"Noto Serif SC",serif; font-weight:900; font-size:46px; letter-spacing:.06em; line-height:1;
+  }
+  .masthead h1 .en{
+    font-family:"Playfair Display",serif; font-weight:900; font-style:italic;
+    color:var(--teal); font-size:24px; letter-spacing:.02em; margin-left:14px;
+  }
+  .lab-meta{text-align:right;font-size:12px;letter-spacing:.14em;color:var(--ink-soft);line-height:2;}
+  .lab-meta .vol{font-family:"Playfair Display",serif;font-size:20px;font-weight:700;color:var(--ink);}
+  .back-link{
+    font-size:12.5px;letter-spacing:.1em;color:var(--teal);
+    border-bottom:1px solid var(--teal);padding-bottom:2px;transition:all .25s;
+  }
+  .back-link:hover{color:var(--vermilion);border-color:var(--vermilion);}
+  .double-rule{border-top:3px solid var(--rule-dark);border-bottom:1px solid var(--rule-dark);height:6px;}
+
+  .topic-head{padding:48px 0 12px;}
+  .topic-head .kicker{
+    display:inline-flex;align-items:center;gap:12px;
+    font-size:12px;letter-spacing:.3em;color:var(--teal);font-weight:700;margin-bottom:22px;
+  }
+  .topic-head .kicker::before{content:'';width:42px;height:1px;background:var(--teal);}
+  .topic-head h2{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:46px;line-height:1.25;
+  }
+  .topic-head h2 .en-name{font-family:"Playfair Display",serif;font-style:italic;color:var(--teal);}
+  .topic-head .standfirst{
+    font-family:"Noto Serif SC",serif;font-size:18px;color:var(--ink-soft);margin-top:16px;line-height:1.9;
+  }
+
+  /* 概念卡 */
+  .concept-card{
+    background:var(--paper-lab);border:1px solid var(--rule);border-top:4px solid var(--teal);
+    padding:30px 34px;margin:30px 0;
+  }
+  .concept-card .cc-label{font-size:11px;letter-spacing:.32em;font-weight:700;color:var(--teal);margin-bottom:12px;}
+  .concept-card .cc-def{font-family:"Noto Serif SC",serif;font-size:19px;font-weight:600;line-height:1.9;}
+  .concept-card .cc-analogy{
+    margin-top:16px;padding-top:16px;border-top:1px dashed var(--rule);
+    font-size:14.5px;color:var(--ink-soft);
+  }
+  .concept-card .cc-analogy b{color:var(--teal-deep);letter-spacing:.1em;font-size:12px;display:block;margin-bottom:4px;}
+
+  /* 原理拆解 */
+  .section-h{
+    display:flex;align-items:baseline;gap:14px;margin:52px 0 8px;
+  }
+  .section-h .no{
+    font-family:"Playfair Display",serif;font-style:italic;font-size:26px;font-weight:700;color:var(--teal);
+  }
+  .section-h h3{font-family:"Noto Serif SC",serif;font-weight:900;font-size:26px;letter-spacing:.05em;}
+  .section-h .en{font-family:"Playfair Display",serif;font-style:italic;font-size:15px;color:var(--ink-faint);margin-left:auto;}
+  .section-intro{font-size:13px;color:var(--ink-faint);letter-spacing:.05em;margin-bottom:22px;}
+
+  .layer{
+    display:grid;grid-template-columns:120px 1fr;gap:28px;
+    padding:26px 0;border-top:1px solid var(--rule);align-items:start;
+  }
+  .layer:last-of-type{border-bottom:1px solid var(--rule);}
+  .layer .lv{
+    font-family:"Playfair Display",serif;font-size:38px;font-weight:900;line-height:1;
+    color:transparent;-webkit-text-stroke:1.2px var(--teal);
+  }
+  .layer h4{font-family:"Noto Serif SC",serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+  .layer p{font-size:15px;color:var(--ink-soft);text-align:justify;}
+  .layer p b{color:var(--ink);font-weight:700;}
+
+  /* 新闻锚点 */
+  .anchors{list-style:none;margin-top:26px;}
+  .anchors li{
+    display:grid;grid-template-columns:30px 1fr;gap:12px;
+    padding:14px 0;border-bottom:1px dotted var(--rule);font-size:14px;color:var(--ink-soft);
+  }
+  .anchors li::before{content:'§';color:var(--teal);font-family:"Playfair Display",serif;}
+  .anchors li .a-body{line-height:1.9;}
+  .anchors li b{color:var(--ink);}
+
+  /* 常见误解 */
+  .myth{
+    display:grid;grid-template-columns:1fr 1fr;gap:0;
+    border:1px solid var(--rule);margin-bottom:-1px;
+  }
+  .myth .wrong{padding:20px 24px;background:rgba(192,57,43,.05);}
+  .myth .right{padding:20px 24px;background:rgba(22,102,90,.06);border-left:1px solid var(--rule);}
+  .myth .tagline{font-size:10.5px;letter-spacing:.25em;font-weight:700;margin-bottom:8px;}
+  .myth .wrong .tagline{color:var(--vermilion);}
+  .myth .right .tagline{color:var(--teal);}
+  .myth p{font-size:13.5px;line-height:1.9;}
+  .myth .wrong p{color:var(--ink-soft);}
+  .myth .right p{color:var(--ink-soft);}
+  .myth .right p b{color:var(--teal-deep);}
+
+  /* 费曼时刻 */
+  .feynman{
+    margin-top:56px;background:var(--ink);color:#e8e2d4;padding:48px 0 44px;
+  }
+  .feynman .wrap{max-width:900px;}
+  .feynman .fy-kicker{font-size:11px;letter-spacing:.34em;color:#5fb3a5;font-weight:700;margin-bottom:10px;}
+  .feynman h3{
+    font-family:"Noto Serif SC",serif;font-weight:900;font-size:32px;color:#f4efe3;letter-spacing:.04em;
+  }
+  .feynman h3 span{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:18px;color:#5fb3a5;margin-left:12px;}
+  .feynman .fy-intro{font-size:13.5px;color:#a89f8c;margin:10px 0 26px;line-height:2;}
+  .fy-q{
+    display:grid;grid-template-columns:52px 1fr;gap:18px;padding:16px 0;
+    border-top:1px solid rgba(232,226,212,.18);align-items:baseline;
+  }
+  .fy-q .qn{font-family:"Playfair Display",serif;font-style:italic;font-size:24px;color:#5fb3a5;}
+  .fy-q p{font-family:"Noto Serif SC",serif;font-size:16.5px;font-weight:600;color:#e8e2d4;line-height:1.8;}
+  .fy-q p small{display:block;font-family:"Noto Sans SC",sans-serif;font-weight:400;font-size:12px;color:#8d8571;margin-top:4px;letter-spacing:.05em;}
+  .fy-input-area{margin-top:30px;}
+  .fy-input-area label{font-size:12px;letter-spacing:.2em;color:#5fb3a5;font-weight:700;display:block;margin-bottom:10px;}
+  #feynman-note{
+    width:100%;min-height:180px;resize:vertical;
+    background:rgba(247,243,234,.06);border:1px solid rgba(232,226,212,.25);
+    color:#f4efe3;font-family:"Noto Sans SC",sans-serif;font-size:14.5px;line-height:2;
+    padding:18px 20px;outline:none;transition:border-color .3s;
+  }
+  #feynman-note:focus{border-color:#5fb3a5;}
+  #feynman-note::placeholder{color:#6e6754;}
+  .fy-actions{display:flex;gap:14px;margin-top:16px;flex-wrap:wrap;}
+  .fy-btn{
+    font-family:"Noto Sans SC",sans-serif;font-size:13px;letter-spacing:.14em;font-weight:500;
+    padding:10px 22px;cursor:pointer;transition:all .25s;border:1px solid #5fb3a5;background:transparent;color:#5fb3a5;
+  }
+  .fy-btn:hover{background:#5fb3a5;color:#12211d;}
+  .fy-btn.primary{background:#5fb3a5;color:#12211d;font-weight:700;}
+  .fy-btn.primary:hover{background:#7ccbbd;}
+  .fy-btn.voice{border-color:#c8a95f;color:#c8a95f;}
+  .fy-btn.voice:hover{background:#c8a95f;color:#1a1608;}
+  .fy-btn.review{border-color:#8a9bc4;color:#8a9bc4;}
+  .fy-btn.review:hover{background:#8a9bc4;color:#101522;}
+  .fy-btn.voice.listening{
+    background:var(--vermilion);border-color:var(--vermilion);color:#fff;
+    animation:voice-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes voice-pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(192,57,43,.55);}
+    50%{box-shadow:0 0 0 10px rgba(192,57,43,0);}
+  }
+  .fy-status{font-size:12px;color:#8d8571;letter-spacing:.08em;align-self:center;}
+  .fy-ref{margin-top:30px;}
+  .fy-ref summary{
+    cursor:pointer;font-size:13px;letter-spacing:.16em;color:#c8a95f;font-weight:700;
+    list-style:none;padding:10px 0;border-top:1px solid rgba(232,226,212,.18);
+  }
+  .fy-ref summary::-webkit-details-marker{display:none;}
+  .fy-ref summary::before{content:'▸ ';}
+  .fy-ref[open] summary::before{content:'▾ ';}
+  .fy-ref .ref-body{
+    background:rgba(200,169,95,.07);border:1px dashed rgba(200,169,95,.4);
+    padding:20px 24px;margin-top:10px;font-size:13.5px;line-height:2.1;color:#d8d0bf;
+  }
+  .fy-ref .ref-body li{margin-bottom:10px;margin-left:20px;}
+  .fy-ref .ref-body b{color:#e9d9ae;}
+
+  /* 学习档案 */
+  .archive-sec{margin-top:56px;padding-bottom:20px;}
+  .archive-sec .section-h{margin-top:0;}
+  #note-list{list-style:none;}
+  #note-list li{
+    display:grid;grid-template-columns:130px 1fr auto;gap:20px;align-items:baseline;
+    padding:16px 0;border-bottom:1px dotted var(--rule);font-size:13.5px;
+  }
+  #note-list .n-vol{font-family:"Playfair Display",serif;font-weight:700;color:var(--teal);}
+  #note-list .n-date{font-size:11px;color:var(--ink-faint);letter-spacing:.1em;}
+  #note-list .n-text{color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  #note-list .n-review{
+    margin-top:8px;padding:10px 14px;
+    background:rgba(138,155,196,.1);border-left:2px solid #8a9bc4;
+    font-size:12px;line-height:1.9;color:var(--ink-faint);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  #note-list .n-review b{color:#5a6b99;letter-spacing:.12em;font-size:11px;margin-right:6px;}
+  #note-list .n-export{font-size:11.5px;letter-spacing:.1em;color:var(--teal);border-bottom:1px dotted var(--teal);cursor:pointer;white-space:nowrap;}
+  .empty-hint{font-size:13px;color:var(--ink-faint);padding:18px 0;border-bottom:1px dotted var(--rule);}
+
+  footer{margin-top:50px;background:var(--ink);color:#cfc8ba;padding:38px 0 34px;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;}
+  footer .f-title{font-family:"Noto Serif SC",serif;font-weight:900;font-size:18px;color:var(--paper);letter-spacing:.1em;}
+  footer .f-title .en{font-family:"Playfair Display",serif;font-style:italic;font-weight:400;font-size:13px;margin-left:10px;color:#5fb3a5;}
+  footer p{font-size:11.5px;letter-spacing:.08em;line-height:2;color:#a39b8a;}
+
+  @media (max-width:720px){
+    .wrap{padding:0 22px;}
+    .masthead h1{font-size:34px;}
+    .topic-head h2{font-size:32px;}
+    .layer{grid-template-columns:1fr;gap:10px;}
+    .layer .lv{font-size:30px;}
+    .myth{grid-template-columns:1fr;}
+    .myth .right{border-left:none;border-top:1px solid var(--rule);}
+    #note-list li{grid-template-columns:1fr;gap:6px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important;}
+  }
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="topline">
+    <span>费曼实验室 · 每日一个前沿概念</span>
+    <span>Learn by Explaining</span>
+    <span>2026 / 09 / 19</span>
+  </div>
+  <div class="masthead">
+    <h1>费曼实验室<span class="en">The Feynman Lab</span></h1>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+      <div class="lab-meta"><span class="vol">Vol.015</span> · 星期六<br>本期概念:通才模型</div>
+      <a class="back-link" href="../">← 返回今日日报</a>
+    </div>
+  </div>
+  <div class="double-rule"></div>
+</header>
+
+<main class="wrap">
+
+  <div class="topic-head">
+    <div class="kicker">今日概念 · TODAY'S CONCEPT</div>
+    <h2>通才模型:当 AI<br><span class="en-name">学会一次看 146 种病</span></h2>
+    <p class="standfirst">今天头条里,阿里达摩院的模型从一张 CT 里认出 146 种病症、OpenAI 给律师做了个专用平台——它们背后是同一个转向:AI 从「一个任务一个模型」走向「一个模型吃下一整族任务」。今天把「通才」拆开看懂。</p>
+  </div>
+
+  <!-- 概念卡 -->
+  <div class="concept-card">
+    <div class="cc-label">概念卡 · IN ONE SENTENCE</div>
+    <p class="cc-def">通才模型(generalist model)指<b>用一个模型同时覆盖一整族任务</b>——在医疗影像里,就是一张片子进、一组病症判断出:146 种病共用同一套学到的「正常与异常」的视觉表征;新病种不再从零训练,而是在已有底子上少量数据适配。</p>
+    <div class="cc-analogy">
+      <b>一个类比</b>
+      过去「一病一模型」像给 146 扇门各配一把钥匙:每把都要找锁匠(采集数据)、开模(训练)、验收(审批),配到冷门的门,成本收不回来,干脆不配。通才模型不是造了 146 把更好的钥匙,而是学会了「锁的构造」这门手艺——见过足够多的锁之后,遇到没见过的门,也知道该往哪个方向拧。手艺是共享的,所以第 100 扇门的边际成本,远低于第 1 扇。
+    </div>
+  </div>
+
+  <!-- 原理拆解 -->
+  <div class="section-h">
+    <span class="no">No.1</span>
+    <h3>原理拆解</h3>
+    <span class="en">How It Works</span>
+  </div>
+  <p class="section-intro">三层递进:共享表征是怎么练出来的;「一整套任务一个模型」与「一个任务一个模型」的根本区别;以及力量与危险为什么来自同一个来源。</p>
+
+  <div class="layer">
+    <div class="lv">01</div>
+    <div>
+      <h4>第一层:共享表征是怎么练出来的</h4>
+      <p>所有病种的片子进同一个网络,训练目标从「这是不是肺结节」变成「这张片子里有哪些异常」——一张片子可以同时带多个病症标签。要答对这道题,模型必须先学会<b>「正常的肚子长什么样」</b>:解剖结构、密度、纹理只有一套,学一次,146 种病共用;各种病灶对它而言都是「对正常的偏离」。数据组织也随之改变:从每个病种各养一摊数据,变成「一张片、一组标注」的统一格式。</p>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="lv">02</div>
+    <div>
+      <h4>第二层:与「一病一模型」的根本区别</h4>
+      <p>传统医疗 AI(CAD)每个模型单独立项:采数据、训练、临床验证、器械审批,一条龙各走一遍——商业上只有高发病种划算,长尾病症长期无人覆盖。通才模型把「阅片」当成一个整体任务:<b>数据、表征、验证都在同一个模型里复用</b>,新病种的边际成本骤降;竞争单位也从「单个诊断产品」变成「平台化的阅片能力」。这正是达摩院敢谈「通用」、OpenAI 敢给法律行业做平台(Astra for Law)的共同底层逻辑——通用底座 + 行业数据,配方是同一张。</p>
+    </div>
+  </div>
+
+  <div class="layer">
+    <div class="lv">03</div>
+    <div>
+      <h4>第三层:力量与危险为何同源</h4>
+      <p>两者都来自「共享」。共享表征让长尾病种第一次有人看,也让<b>偏差一次传染全部</b>:训练数据里如果某类设备、某个人群占比过高,偏差会同时写进 146 个诊断输出,而不是只影响某一个单病种模型;「专家级」也是对全体病种的平均口径,不承诺每一种都同样强。共享放大能力,也放大系统性误差——这是同一枚硬币的两面。</p>
+    </div>
+  </div>
+
+  <!-- 为什么重要 -->
+  <div class="section-h">
+    <span class="no">No.2</span>
+    <h3>为什么重要,锚在今天的新闻</h3>
+    <span class="en">Why It Matters</span>
+  </div>
+  <p class="section-intro">「通才」不是实验室概念,今天的日报里它至少出现了三次:</p>
+  <ul class="anchors">
+    <li><span class="a-body"><b>今日头条 · 阿里达摩院 DAMO RADAR 登《科学》</b> —— 单张腹部增强 CT 一次性识别 146 种病症、达影像科专家水准并开源:「一病一模型」的旧路径第一次被系统性替代。</span></li>
+    <li><span class="a-body"><b>今日 02 · OpenAI 发布法律平台 Astra for Law</b> —— 通用底座 + 2.3 亿法律网页索引 + 幻觉抑制:同一张「通才配方」,从医疗复制到了法律。</span></li>
+    <li><span class="a-body"><b>今日 05 · 智谱 GLM-5.3-FlashX 推理 200 tokens/s</b> —— 通才模型要进基层医院,先过成本关:推理提速降价,「平台化阅片」才有经济可行性。</span></li>
+  </ul>
+
+  <!-- 常见误解 -->
+  <div class="section-h">
+    <span class="no">No.3</span>
+    <h3>常见误解</h3>
+    <span class="en">Common Myths</span>
+  </div>
+  <p class="section-intro">三个最容易搞错的地方——聊天的 credibility 就从这里来。</p>
+
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解一</div>
+      <p>「146 种病都到专家水准,影像科医生该失业了。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>「专家级」是测试集上的<b>统计均值</b>,各病种表现并不均匀;监管审批的定位也是「辅助诊断」——负责筛查与提示,签字与担责的仍是医生。它替代的是重复阅片劳动,不是责任主体。</p>
+    </div>
+  </div>
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解二</div>
+      <p>「通才不就是参数更大的单病种模型?堆算力就行。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>关键在<b>数据组织与训练目标</b>:一张片多病种标注、多标签输出、表征共享。把 146 个单病种模型拼在一起不等于通才——就像一柜子钥匙,不等于会开锁这门手艺。</p>
+    </div>
+  </div>
+  <div class="myth">
+    <div class="wrong">
+      <div class="tagline">✗ 误解三</div>
+      <p>「都开源了,下载下来就能在医院用。」</p>
+    </div>
+    <div class="right">
+      <div class="tagline">✓ 实际上</div>
+      <p>开源交付的是<b>模型权重</b>,临床落地还差本地数据校准、人群与设备差异验证、器械审批、工作流接入。开源给的是研究者和器械厂商的起点,不是医院的终点。</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- 费曼时刻 -->
+<section class="feynman">
+  <div class="wrap">
+    <div class="fy-kicker">费曼时刻 · THE FEYNMAN MOMENT</div>
+    <h3>现在,轮到你讲<span>If you can't explain it simply...</span></h3>
+    <p class="fy-intro">合上上面的内容,用自己的话回答下面三问。写得糙没关系——费曼法的价值恰恰在你卡壳的地方。写完先<b style="color:#c8a95f;">对照参考要点自查</b>,再<b style="color:#c8a95f;">「提交点评」获得导师即时反馈</b>:哪里讲对了、哪里是盲区、哪里值得深挖。笔记只存在你的浏览器里,可随时导出 Markdown 留档。</p>
+
+    <div class="fy-q">
+      <div class="qn">Q1</div>
+      <p>不许说「通才」「通用」这类词,用你自己的话讲清:这种模型与过去「一种病一个模型」相比,到底省掉了什么、又新冒出了什么成本?<small>提示:想想数据采集、训练、审批这三件事,是各走一遍还是共用;再想想「共享」带来了什么以前不存在的风险。</small></p>
+    </div>
+    <div class="fy-q">
+      <div class="qn">Q2</div>
+      <p>为什么说「共享的表征」既是这种模型的力量来源,也是它的风险来源?请给出一个具体的风险场景。<small>提示:如果训练数据里某类 CT 设备或某个人群占比过高,146 个诊断输出会发生什么?</small></p>
+    </div>
+    <div class="fy-q">
+      <div class="qn">Q3</div>
+      <p>「诊断水平达到专家级」这句话,和一位具体病人在具体医院拿到专家级诊断之间,还隔着哪些环节?<small>提示:均值口径 vs 单病种表现、测试人群 vs 本地人群、模型能力 vs 器械审批与责任归属。</small></p>
+    </div>
+
+    <div class="fy-input-area">
+      <label for="feynman-note">我的复述 · MY EXPLANATION</label>
+      <textarea id="feynman-note" placeholder="Q1:……&#10;Q2:……&#10;Q3:……&#10;&#10;可以打字,也可以用下面的「按住说话」语音输入,写完后展开参考要点对照。"></textarea>
+      <div class="fy-actions">
+        <button class="fy-btn primary" id="btn-submit">提交点评</button>
+        <button class="fy-btn voice" id="btn-voice" title="按住说话,松开结束(Chrome/Edge)">🎤 按住说话</button>
+        <button class="fy-btn review" id="btn-review" title="粘贴导师从对话中回写的点评包,与本篇复述配对存档">📥 粘贴导师点评</button>
+        <button class="fy-btn" id="btn-save">保存笔记</button>
+        <button class="fy-btn" id="btn-export">导出 Markdown</button>
+        <button class="fy-btn" id="btn-clear">清空重写</button>
+        <span class="fy-status" id="fy-status"></span>
+      </div>
+    </div>
+
+    <details class="fy-ref">
+      <summary>写完了?展开参考要点,逐条自查(先写后看,顺序不能反)</summary>
+      <div class="ref-body">
+        <ol>
+          <li><b>一句话版本:</b>一个模型同时学一整族任务——共享「正常长什么样」的底层表征,一张片子输出一组病症判断;新病种在共享底子上少量数据适配,不再从零开始。</li>
+          <li><b>关键区别:</b>传统路径一病一模型,数据、训练、审批各走一遍,长尾病症无人覆盖;通才把「阅片」当整体任务,数据与验证复用,边际成本骤降,竞争单位从产品变成平台。</li>
+          <li><b>代价与风险:</b>共享让长尾有人看,也让偏差一次传染所有病种;「专家级」是均值口径,不保证每科同样强。本地校准与器械审批,决定它进医院的速度。</li>
+          <li><b>加分项(聊资):</b>看到任何「通用模型」新闻,先问三个问题——共享的到底是什么(表征/数据/审批)?长尾表现与平均差多少?出了错谁来签字?第三个问题的答案,决定这项技术离临床还有多远。</li>
+        </ol>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- 学习档案 -->
+<section class="wrap archive-sec">
+  <div class="section-h">
+    <span class="no">No.4</span>
+    <h3>我的学习档案</h3>
+    <span class="en">My Notes</span>
+  </div>
+  <p class="section-intro">以下复述记录保存在本浏览器中,换设备或清缓存会丢失——重要内容请记得导出,或直接贴到会话里和我讨论。</p>
+  <ul id="note-list"></ul>
+  <p class="empty-hint" id="empty-hint" style="display:none;">还没有任何笔记。完成上方复述并保存后,这里会留下你的第一笔。</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <div class="f-title">费曼实验室<span class="en">The Feynman Lab</span></div>
+      <p>前沿日报 · 每日一个概念 | 笔记与导出均在本地浏览器完成</p>
+    </div>
+    <div>
+      <p>Vol.015 · 2026 年 9 月 19 日<br><a href="../" style="color:#cfc8ba;border-bottom:1px solid #a39b8a;">返回今日日报 →</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var VOL='Vol.015', DATE='2026-09-19', TOPIC='通才模型:当AI学会一次看146种病';
+  var KEY='fd-note-'+VOL;
+  var note=document.getElementById('feynman-note');
+  var status=document.getElementById('fy-status');
+
+  function setStatus(msg,ms){
+    status.textContent=msg;
+    if(ms){setTimeout(function(){status.textContent='';},ms);}
+  }
+  function readNote(){
+    try{var raw=localStorage.getItem(KEY);return raw?JSON.parse(raw):null;}catch(e){return null;}
+  }
+  function writeNote(text){
+    try{
+      var prev=readNote()||{};
+      localStorage.setItem(KEY,JSON.stringify({
+        text:text,
+        review:prev.review||'',
+        reviewAt:prev.reviewAt||'',
+        savedAt:new Date().toISOString()
+      }));
+      return true;
+    }catch(e){return false;}
+  }
+  function writeReview(review){
+    try{
+      var prev=readNote()||{};
+      if(!prev.text){return 'no-note';}
+      localStorage.setItem(KEY,JSON.stringify({
+        text:prev.text,
+        review:review,
+        reviewAt:new Date().toISOString(),
+        savedAt:prev.savedAt||new Date().toISOString()
+      }));
+      return true;
+    }catch(e){return false;}
+  }
+  // 回填已有笔记
+  var existing=readNote();
+  if(existing&&existing.text){note.value=existing.text;setStatus('已载入你 '+existing.savedAt.slice(0,10)+' 保存的笔记');}
+
+  document.getElementById('btn-save').addEventListener('click',function(){
+    if(!note.value.trim()){setStatus('先写点什么再保存');return;}
+    setStatus(writeNote(note.value)?'已保存':'保存失败(浏览器存储不可用)',3000);
+    renderArchive();
+  });
+  document.getElementById('btn-clear').addEventListener('click',function(){
+    if(note.value&&!confirm('清空输入框内容?(已保存的笔记不受影响)'))return;
+    note.value='';setStatus('');
+  });
+  // 提交点评:复制到剪贴板,回到对话粘贴即获即时点评
+  document.getElementById('btn-submit').addEventListener('click',function(){
+    var text=note.value.trim();
+    if(!text){setStatus('先写点什么再提交');return;}
+    var payload='【费曼时刻 · '+VOL+' · '+TOPIC+'】\n请作为费曼导师点评我的复述:对照概念要点,指出我理解到位的地方、盲区或偏差,以及值得深挖的延伸点。\n\n'+text;
+    var done=function(){setStatus('已复制!回到 QwenWork 对话粘贴发送,即可获得即时点评',8000);};
+    function fallback(){
+      var ta=document.createElement('textarea');
+      ta.value=payload;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy');done();}
+      catch(e){setStatus('复制失败,请全选文本框内容手动复制');}
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(payload).then(done,fallback);
+    }else{fallback();}
+  });
+
+  // ============ 粘贴导师点评:从剪贴板/手动粘贴,与复述配对存档 ============
+  document.getElementById('btn-review').addEventListener('click',function(){
+    var n=readNote();
+    if(!n||!n.text){setStatus('请先保存复述笔记,再粘贴点评(两者需配对)');return;}
+    var doSave=function(payload){
+      // 校验点评包格式:导师以「导师点评包」标记回写
+      var ok=false,content='';
+      if(payload){
+        var m=payload.match(/【导师点评包[\s\S]*】\n([\s\S]*)/);
+        if(m){content=m[1].trim();ok=true;}
+        else if(payload.indexOf('费曼时刻')===-1&&payload.length>40){content=payload.trim();ok=true;}
+      }
+      if(!ok){
+        // 格式不符:弹出粘贴框手动输入
+        var raw=prompt('剪贴板中没有检测到点评内容。\n请粘贴导师点评全文(可从对话中复制):');
+        if(!raw||!raw.trim())return;
+        content=raw.trim();
+      }
+      var r=writeReview(content);
+      if(r==='no-note'){setStatus('请先保存复述笔记,再粘贴点评');return;}
+      setStatus(r?'✓ 点评已与本篇复述配对存档,见「我的学习档案」':'保存失败(浏览器存储不可用)',6000);
+      renderArchive();
+    };
+    if(navigator.clipboard&&navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(t){doSave(t);},function(){doSave('');});
+    }else{doSave('');}
+  });
+
+  // ============ 语音复述(Web Speech API) ============
+  var vbtn=document.getElementById('btn-voice');
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  var recog=null,listening=false;
+  if(!SR){
+    vbtn.disabled=true;
+    vbtn.title='当前浏览器不支持语音识别,请使用 Chrome 或 Edge';
+    vbtn.style.opacity=.45;vbtn.style.cursor='not-allowed';
+  }else{
+    recog=new SR();
+    recog.lang='zh-CN';
+    recog.continuous=true;      // 长按期间持续识别
+    recog.interimResults=true;  // 实时显示中间结果
+    var finalBuf='';            // 本轮已确认文字
+    var interim='';             // 本轮未确认文字
+    var baseText='';            // 按下时文本框已有内容
+
+    recog.onresult=function(e){
+      interim='';
+      for(var i=e.resultIndex;i<e.results.length;i++){
+        var r=e.results[i];
+        if(r.isFinal){finalBuf+=r[0].transcript;}
+        else{interim+=r[0].transcript;}
+      }
+      note.value=baseText+(baseText?'\n':'')+finalBuf+interim;
+    };
+    recog.onerror=function(e){
+      stopListen();
+      if(e.error==='not-allowed'){
+        setStatus('麦克风权限被拒绝,请在浏览器地址栏允许麦克风后重试',6000);
+      }else if(e.error!=='aborted'){
+        setStatus('语音识别出错:'+e.error,5000);
+      }
+    };
+    recog.onend=function(){
+      // 异常结束(如超时自动停):若仍在按住,重启;否则收尾
+      if(listening){try{recog.start();}catch(e){}}
+      else{finishListen();}
+    };
+
+    function startListen(){
+      if(listening)return;
+      listening=true;
+      finalBuf='';interim='';baseText=note.value;
+      try{
+        recog.start();
+        vbtn.classList.add('listening');
+        vbtn.innerHTML='● 录音中…松开结束';
+        setStatus('正在聆听,请开始复述');
+      }catch(e){
+        listening=false;
+        setStatus('无法启动语音识别,请重试',4000);
+      }
+    }
+    function stopListen(){
+      if(!listening)return;
+      listening=false;
+      try{recog.stop();}catch(e){finishListen();}
+    }
+    function finishListen(){
+      vbtn.classList.remove('listening');
+      vbtn.innerHTML='🎤 按住说话';
+      if(finalBuf){
+        note.value=baseText+(baseText?'\n':'')+finalBuf.trim();
+        setStatus('语音已转写并追加(可直接编辑修正),记得提交点评',6000);
+      }else{
+        note.value=baseText;
+        setStatus('没有识别到内容,再试一次?');
+      }
+    }
+    // 按住说话:鼠标 + 触摸 双支持
+    vbtn.addEventListener('mousedown',startListen);
+    vbtn.addEventListener('touchstart',function(e){e.preventDefault();startListen();},{passive:false});
+    window.addEventListener('mouseup',stopListen);
+    vbtn.addEventListener('touchend',function(e){e.preventDefault();stopListen();},{passive:false});
+    // 防止按住时拖出按钮导致录音不停
+    vbtn.addEventListener('mouseleave',function(){if(listening)stopListen();});
+  }
+  function exportOne(text,name){
+    var blob=new Blob([text],{type:'text/markdown;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);a.download=name;
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove();},500);
+  }
+  document.getElementById('btn-export').addEventListener('click',function(){
+    var text=note.value.trim();
+    if(!text){setStatus('没有可导出的内容');return;}
+    exportOne('# 费曼实验室 · '+VOL+' · '+TOPIC+'\n\n'+DATE+'\n\n'+text+'\n','费曼笔记-'+VOL+'.md');
+  });
+
+  function renderArchive(){
+    var list=document.getElementById('note-list');
+    var empty=document.getElementById('empty-hint');
+    list.innerHTML='';
+    var found=[];
+    try{
+      for(var i=0;i<localStorage.length;i++){
+        var k=localStorage.key(i);
+        if(k&&k.indexOf('fd-note-')===0){
+          try{
+            var v=JSON.parse(localStorage.getItem(k));
+            found.push({vol:k.replace('fd-note-',''),text:v.text||'',review:v.review||'',date:(v.savedAt||'').slice(0,10)});
+          }catch(e){}
+        }
+      }
+    }catch(e){}
+    found.sort(function(a,b){return a.vol<b.vol?1:-1;});
+    if(!found.length){empty.style.display='block';return;}
+    empty.style.display='none';
+    found.forEach(function(f){
+      var li=document.createElement('li');
+      var left=document.createElement('div');
+      var vol=document.createElement('div');vol.className='n-vol';vol.textContent=f.vol;
+      var dt=document.createElement('div');dt.className='n-date';dt.textContent=f.date;
+      left.appendChild(vol);left.appendChild(dt);
+      var mid=document.createElement('div');
+      var tx=document.createElement('div');tx.className='n-text';tx.textContent=f.text;
+      mid.appendChild(tx);
+      if(f.review){
+        var rv=document.createElement('div');rv.className='n-review';
+        rv.innerHTML='<b>导师点评</b> '+f.review.replace(/</g,'&lt;').substring(0,120)+(f.review.length>120?'…':'');
+        mid.appendChild(rv);
+      }
+      var ex=document.createElement('span');ex.className='n-export';ex.textContent='导出 ↧';
+      (function(ff){
+        ex.addEventListener('click',function(){
+          var out='# 费曼实验室 · '+ff.vol+'\n\n'+ff.date+'\n\n## 我的复述\n\n'+ff.text+'\n';
+          if(ff.review){out+='\n## 导师点评\n\n'+ff.review+'\n';}
+          exportOne(out,'费曼笔记-'+ff.vol+'.md');
+        });
+      })(f);
+      li.appendChild(left);li.appendChild(mid);li.appendChild(ex);
+      list.appendChild(li);
+    });
+  }
+  renderArchive();
+})();
+</script>
+</body>
+</html>
